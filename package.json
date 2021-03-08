@@ -1,0 +1,50 @@
+{
+  "name": "avbot",
+  "version": "1.2.2",
+  "description": "Whatsapp Bot API / Powered by Venom-Bot",
+  "type": "module",
+  "scripts": {
+    "transpile": "tsc -p tsconfig.json",
+    "beautify": "js-beautify -r --editorconfig ./build/*",
+    "build": "yarn transpile && yarn beautify",
+    "start": "node ./build/bot.js",
+    "load": "yarn build && yarn start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-basic-auth": "^1.2.0",
+    "node-cron": "^2.0.3",
+    "request-ip": "^2.1.3",
+    "venom-bot": "^2.2.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/jest": "^26.0.20",
+    "@types/node-cron": "^2.0.3",
+    "@types/request-ip": "^0.0.35",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.22.0",
+    "jest": "^26.6.3",
+    "js-beautify": "^1.13.5",
+    "popper": "^1.0.1",
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.1",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.1.5",
+    "yarn-upgrade-all": "^0.5.4"
+  },
+  "resolutions": {}
+}
