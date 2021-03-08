@@ -3,9 +3,9 @@
 #                                                         AVBOT                                                          #
 ##########################################################################################################################
 #                                                                                                                        #
-#                                                     Avbot v1.2.2                                                       #
+#                                                     Avbot v1.6.4                                                       #
 #                                          Multi-language API for Whatsapp Bot                                           #
-#                             ---------------- Python3 -- Node.js -- MySQL ----------------                              #
+#                             ---------------- Python3 -- NodeJS -- MySQL ----------------                               #
 #                                             This is a Development Server                                               #
 #                                                 Powered by venom-bot                                                   #
 #                                                                                                                        #
@@ -25,87 +25,75 @@ import cron from 'node-cron'
 ##########################################################################################################################
 */
 
-// Create Bot Instance
+// Create Instance of Bot
 const Avbot = new Bot()
-// Create Laminador Instance
+
+// Create Instance of Laminador
 const Lam = new Laminador(Avbot)
 
-// Producao Laminador
-Avbot.add(
-  'prod_lam',
-  message => message.clean() === 'producao',
+// Responde Agradecimento
+Avbot.add('cool_feedback',
+  message => ['obrigado', 'valeu'].includes(message.clean()),
   async message => {
-    await message.quote(Avbot.chat.gotIt, 'got_it')
-    await message.send(await Lam.getProd(), 'bot::prod_lam')
+    await message.quote('Estou as ordens! 😉🤝', 'cool_feedback')
   }
 )
 
 // Producao Trefila
-Avbot.add(
-  'prod_trf',
-  message => message.clean() === 'trefila',
+Avbot.add('prod_trf',
+  message => ['trefila', 'producao trefila'].includes(message.clean()),
   async message => {
     await message.quote(Avbot.chat.gotIt, 'got_it')
-    await message.send(await Lam.getTref(), 'bot::prod_trf')
+    await message.send(Lam.getTref(), 'bot::prod_trf')
+  }
+)
+
+// Producao Laminador
+Avbot.add('prod_lam',
+  message => ['laminador', 'producao', 'producao laminador'].includes(message.clean()),
+  async message => {
+    await message.quote(Avbot.chat.gotIt, 'got_it')
+    await message.send(Lam.getProd(), 'bot::prod_lam')
   }
 )
 
 // Producao do Mes Laminador
-Avbot.add(
-  'prod_mes_lam',
-  message => message.clean() === 'producao do mes',
+Avbot.add('prod_mes_lam',
+  message => ['producao mes', 'producao do mes', 'producao mes laminador'].includes(message.clean()),
   async message => {
     await message.quote(Avbot.chat.gotIt, 'got_it')
-    await message.send(await Lam.getProdMes(), 'bot::prod_mes_lam')
-  }
-)
-
-// Responde Agradecimento
-Avbot.add(
-  'cool_feedback',
-  message => ['obrigado', 'valeu'].includes(message.clean()),
-  async message => {
-    await message.quote('Estou as ordens! 😉🤝🏾', 'cool_feedback')
+    await message.send(Lam.getProdMes(), 'bot::prod_mes_lam')
   }
 )
 
 // Responde Pergunta Geral do Usuario
-Avbot.add(
-  'else',
-  async message => {
-    await message.quote(Avbot.chat.askPython.asking, 'asking_py')
-    Lam.putData({
-        question: message.clean()
-      })
-      .catch(async error => {
-        await Avbot.bot.log(`Error(admin::exec) Throw(${error})`)
+Avbot.add('else', async message => {
+  await message.quote(Avbot.chat.askPython.asking, 'asking_py')
+  Lam.putData({ question: message.clean() })
+    .catch(async error => {
+      await Avbot.bot.log(`Error(admin::exec) Throw(${error})`)
+      await message.send(Avbot.bot.chat.error.network, 'error_in_request')
+    })
+    .then(async value => {
+      if (!value) {
+        await Avbot.bot.log('Error(admin::exec) Throw(void)')
         await message.send(Avbot.bot.chat.error.network, 'error_in_request')
-      })
-      .then(async value => {
-        if (!value) return false
-        await message.quote(Avbot.chat.askPython.finally, 'got_py_response')
-        await message.send(value, 'py_response')
-      })
-  }
-)
-
-// Cron Scheduled Messages
-cron.schedule('59 */1 * * *', async () => {
-  // Producao Trefila Grupo
-  await Avbot.send(
-    '558181061698-1580518561@g.us',
-    await Lam.getTref(),
-    'cron::prod_trf'
-  )
-  // Producao Laminador Calegari
-  await Avbot.send(
-    '559991536500@c.us',
-    await Lam.getProd(),
-    'cron::prod_lam_calegari'
-  )
+        return
+      }
+      await message.quote(Avbot.chat.askPython.finally, 'got_py_response')
+      await message.send(value, 'py_response')
+    })
 })
 
-// Create Venom Instance
+// Cron Scheduled Messages
+cron.schedule('0 */1 * * *', async () => {
+  // Producao Trefila Grupo
+  await Avbot.send('grupo_trefila', Lam.getTref(), 'cron::prod_trf')
+  // Producao Laminador Calegari
+  await Avbot.send('calegari', Lam.getProd(), 'cron::prod_lam_calegari')
+})
+
+// Create Instance of Venom
 Avbot.start('avbot')
 
 /*
