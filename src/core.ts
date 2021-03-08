@@ -550,7 +550,7 @@ class Chat {
   }
 
   get gotMention(): string {
-    let msg = this.misc.rand(['🙋🏾‍♂‍', '😁'])
+    let msg = this.misc.rand(['🙋♂‍', '😁'])
     msg += ' ' + this.misc.rand(['Eu', 'Aqui'])
     return msg
   }
@@ -617,10 +617,8 @@ export default class Bot {
   constructor () {
     // Get Miscellaneous Methods
     this.misc = misc
-
     // Bot Properties
     this.started = false
-
     // Set Lists
     this.actions = {}
 
