@@ -807,6 +807,7 @@ export default class Bot {
       for (const action of Object.values(this.bot.actions)) {
         if (action.cond && action.name !== 'else') {
           const [cond, condError] = await action.cond(message)
+          // console.log(`${action.name}: ${JSON.stringify([cond, condError])}`)
           if (cond && !condError) {
             await logAction(action)
             const [data, actionError] = await action.do(message)
