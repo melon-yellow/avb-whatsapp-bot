@@ -106,6 +106,36 @@ export default class Miscellaneous {
     )
   }
 
+  // Safe Pattern for Error Handling
+  safe(
+    func: (...params: any[]) => any
+  ): (...params: any[]) => Promise<[ReturnType<typeof func>, Error]> {
+    if (typeof func !== 'function') return
+    // set async function
+    const fasync = async(...params: any[]) => func(...params)
+    // return decorated function
+    return async (...params: any[]) => {
+      // set variables
+      let value: ReturnType<typeof func>
+      let error: Error
+      const promise = fasync(...params)
+      // await then and catch
+      await new Promise(resolve => {
+        promise
+          .catch(err => {
+            error = err
+            resolve(null)
+          })
+          .then(val => {
+            value = val
+            resolve(null)
+          })
+      })
+      // return value and error
+      return [value, error]
+    }
+  }
+
   // Try something
   async try(
     exec: () => unknown,
@@ -117,18 +147,12 @@ export default class Miscellaneous {
     while (i < repeat) {
       if (i > 0) await this.wait(delay)
       const res = await exec()
-      let cond: boolean | Promise<boolean> = false
+      let cond: boolean | Promise<boolean>
       try { cond = verify(res) } catch { cond = false }
       if (this.typeGuards.isPromise(cond)) {
-        cond
+        await cond
           .catch(e => { cond = false })
-          .then(v => {
-            if (typeof v !== 'boolean') {
-              cond = false
-              return
-            }
-            cond = v
-          })
+          .then(v => { cond = !!v })
       }
       if (cond) return res
       i++

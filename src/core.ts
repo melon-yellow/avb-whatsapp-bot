@@ -11,6 +11,12 @@ import type * as expressCore from 'express-serve-static-core'
 import type VenomHostDevice from 'venom-bot/dist/api/model/host-device'
 import type { AxiosResponse } from 'axios'
 
+/*
+##########################################################################################################################
+#                                                    MISCELLANEOUS CLASS                                                 #
+##########################################################################################################################
+*/
+
 // New Miscellaneous Object
 const misc = new Miscellaneous()
 
@@ -21,14 +27,14 @@ const misc = new Miscellaneous()
 */
 
 // Message Text Type
-type TMessageText = string | Promise<string> | (() => string | Promise<string>)
+type TFetchString = string | Promise<string> | (() => string | Promise<string>)
 
 // Sent Message Interface
 interface ISent extends Venom.Message {
   readonly whapp: Whapp
   readonly quotedMsg: ISent
-  send(msg: TMessageText, log?: string, replyId?: string): Promise<ISent>
-  quote(msg: TMessageText, log?: string): Promise<ISent>
+  send(msg: TFetchString, log?: TFetchString, replyId?: TFetchString): Promise<ISent>
+  quote(msg: TFetchString, log?: TFetchString): Promise<ISent>
   onReply(exec: TExec): boolean
   clean(): string
 }
@@ -38,14 +44,16 @@ interface ISentTextObj {
   to: { _serialized: string }
 }
 
-// Check if Is Sent Text Object
-function isSentTextObj(obj: unknown): obj is ISentTextObj {
-  if (!misc.typeGuards.isObject(obj)) return false
-  else if (!('to' in obj)) return false
-  else if (!misc.typeGuards.isObject(obj.to)) return false
-  else if (!('_serialized' in obj.to)) return false
-  else if (typeof obj.to._serialized !== 'string') return false
-  else return true
+class WhappTypeGuards {
+  // Check if Is Sent Text Object
+  isSentTextObj(obj: unknown): obj is ISentTextObj {
+    if (!misc.typeGuards.isObject(obj)) return false
+    else if (!('to' in obj)) return false
+    else if (!misc.typeGuards.isObject(obj.to)) return false
+    else if (!('_serialized' in obj.to)) return false
+    else if (typeof obj.to._serialized !== 'string') return false
+    else return true
+  }
 }
 
 /*
@@ -56,16 +64,17 @@ function isSentTextObj(obj: unknown): obj is ISentTextObj {
 
 // Exec Function Type
 type TExec = (m: ISent) => any
+type TAExec = (m: ISent) => Promise<[any, Error]>
 
 // Interface Action Interface
 type IInterfaceAction = (req: expressCore.Request) => any
+type IAInterfaceAction = (req: expressCore.Request) => Promise<[any, Error]>
 
 // Action Interface
 interface IAction {
   readonly name: string,
-  cond?: TExec,
-  exec?: TExec,
-  do?: TExec
+  cond?: TAExec,
+  do: TAExec
 }
 
 /*
@@ -77,7 +86,9 @@ interface IAction {
 class Whapp {
   bot: Bot
   me: VenomHostDevice.Me
-  replyables: Record<string, TExec>
+  replyables: Record<string, TAExec>
+
+  typeGuards = new WhappTypeGuards()
 
   constructor (bot: Bot) {
     Object.defineProperty(this, 'bot',
@@ -157,18 +168,18 @@ class Whapp {
   */
 
   // fetch data for message
-  async fetch(to: string, data: TMessageText): Promise<string> {
+  async fetch(data: TFetchString): Promise<string> {
     // Set Resolution Variable
     let resolution: string = null
-    // check for type of input
+    // check typeof input
     if (typeof data === 'string') resolution = data
-    else if (data instanceof Promise) resolution = await data
+    else if (this.misc.typeGuards.isPromise(data)) resolution = await data
     else if (typeof data === 'function') {
       const preRes = data()
       if (typeof preRes === 'string') resolution = preRes
-      else if (preRes instanceof Promise) resolution = await preRes
+      else if (this.misc.typeGuards.isPromise(preRes)) resolution = await preRes
     }
-    // chefk for type of output
+    // check typeof output
     if (typeof resolution !== 'string') resolution = null
     // return text
     return resolution
@@ -238,20 +249,20 @@ class Whapp {
       Object.assign({}, sent,
         {
           // Set Properties
-          id: `${sent.id}`,
-          body: `${sent.body}`,
+          id: sent.id,
+          body: sent.body,
           // Fix Contact Names
-          from: whapp.contact(`${sent.from}`, -1),
-          author: whapp.contact(`${sent.author}`, -1),
+          from: whapp.contact(sent.from, -1),
+          author: whapp.contact(sent.author, -1),
           // Fix Quoted Message Object
           quotedMsg: whapp.setMessage(sent.quotedMsgObj),
           quotedMsgObj: null,
           // Send Message to Chat
-          async send(msg: TMessageText, log?: string, replyId?: string): Promise<ISent> {
+          async send(msg: TFetchString, log?: TFetchString, replyId?: TFetchString): Promise<ISent> {
             return this.whapp.send(this.from, msg, log, replyId)
           },
           // Quote Message
-          async quote(msg: TMessageText, log?: string): Promise<ISent> {
+          async quote(msg: TFetchString, log?: TFetchString): Promise<ISent> {
             return this.send(msg, log, this.id)
           },
           // Set On-Reply Action
@@ -280,51 +291,77 @@ class Whapp {
   ##########################################################################################################################
   */
 
+  // Send Text Method
+  async sendText(phoneNumber: string, text: string): Promise<ISent> {
+    const sentObj = await this.client.sendText(phoneNumber, text)
+    if (!this.typeGuards.isSentTextObj(sentObj)) throw new Error('message not sent')
+    return this.getMessageById(sentObj.to._serialized)
+  }
+
+  // Send Reply Method
+  async sendReply(phoneNumber: string, text: string, replyId: string): Promise<ISent> {
+    // check if message exists
+    const replyTarget = await this.getMessageById(replyId)
+    if (!replyTarget) replyId = ''
+    // then send reply
+    const reply = await this.client.reply(phoneNumber, text, replyId)
+    // get message by id
+    return await this.getMessageById(reply.id)
+  }
+
   // Send Message Method
-  async send(to: string, msg: TMessageText, log = '[text]', replyId?: string): Promise<ISent> {
+  async send(
+    to: TFetchString,
+    text: TFetchString,
+    log?: TFetchString,
+    replyId?: TFetchString
+  ): Promise<ISent> {
     // check if bot has started
-    if (!this.bot.started) return
+    if (!this.bot.started) throw new Error('bot not started')
+    // fetch text data
+    to = await this.fetch(to)
+    text = await this.fetch(text)
+    log = await this.fetch(log)
+    replyId = await this.fetch(replyId)
+    // check params consistency
+    if (typeof to !== 'string') throw new Error('argument "to" not valid')
+    if (typeof text !== 'string') throw new Error('argument "text" not valid')
+    if (log && typeof log !== 'string') throw new Error('argument "log" not valid')
+    if (replyId && typeof replyId !== 'string') throw new Error('argument "replyId" not valid')
     // get number from contacts
-    const numRef = this.contact(to)
-    // fetch message text data
-    msg = await this.fetch(numRef, msg)
-    if (typeof msg !== 'string') return
-    // check for reply id
-    let sent: Promise<Venom.Message> = null
-    try {
-      if (!replyId) {
-        const sentObj = await this.client.sendText(numRef, msg)
-        if (!isSentTextObj(sentObj)) throw Error('Sent Object Not Found')
-        sent = this.getMessageById(sentObj.to._serialized)
-      } else {
-      // check if message exists
-        const toReply = await this.getMessageById(replyId)
-        if (!toReply) replyId = ''
-        // then send reply
-        sent = this.client.reply(numRef, msg, replyId)
-      }
-    } catch (error) {
-      sent = new Promise((resolve, reject) => reject(error))
+    const phoneNumber = this.contact(to)
+    // set message object
+    let send: (...params: string[]) => Promise<[Venom.Message, Error]>
+    const params = [phoneNumber, text]
+    if (!replyId) send = this.misc.safe(this.sendText.bind(this))
+    else {
+      send = this.misc.safe(this.sendReply.bind(this))
+      params.push(replyId)
     }
-    // set message
-    let message: ISent = null
-    await sent
-    await new Promise(resolve => {
-      sent
-        .catch(async error => {
-          await this.bot.log(`Throw(bot::send_msg) Catch(${error})`)
-          resolve(null)
-        })
-        .then(async msg => {
-          if (msg) {
-            await this.bot.log(`Sent(${log}) To(${to})`)
-            message = this.setMessage(msg)
-          }
-          resolve(null)
-        })
-    })
+    // send message
+    const [data, sendMessageError] = await send(...params)
+    // check for error
+    if (sendMessageError) {
+      await this.bot.log(`Throw(bot::send_msg) Catch(${sendMessageError})`)
+      throw sendMessageError
+    }
+    // on success
+    await this.bot.log(`Sent(${log}) To(${to})`)
+    const sent = this.setMessage(data)
     // return message
-    return message
+    return sent
+  }
+
+  // Safe Send Message Method
+  async sends(
+    to: TFetchString,
+    msg: TFetchString,
+    log?: TFetchString,
+    replyId?: TFetchString
+  ): Promise<[ISent, Error]> {
+    type TSend = (...params: TFetchString[]) => Promise<[ISent, Error]>
+    const send: TSend = this.misc.safe(this.send.bind(this))
+    return await send(to, msg, log, replyId)
   }
 }
 
@@ -340,7 +377,7 @@ class Interface {
   conn: boolean
   auth: string
   app: expressCore.Express
-  actions: Record<string, IInterfaceAction>
+  actions: Record<string, IAInterfaceAction>
 
   constructor (bot: Bot) {
     Object.defineProperty(this, 'bot',
@@ -361,12 +398,12 @@ class Interface {
     )
     this.app.use(this.misc.express.json())
     // Set Bot Interface
-    this.app.get('/interface', async (req, res) => {
+    this.app.post('/interface', async (req, res) => {
       // Execute Functionality
-      const status = await this.bot.interf.execute(req)
+      const response = await this.interf.execute(req)
       // Send Response
       res.send(JSON.stringify(
-        this.misc.serialize(status)
+        this.misc.serialize(response)
       ))
     })
   }
@@ -382,7 +419,7 @@ class Interface {
   get misc() { return this.bot.misc }
 
   // Interface
-  async Interface(data: any): Promise<AxiosResponse<any>> {
+  async req(data: any): Promise<AxiosResponse<any>> {
     return this.misc.axios.post(
       'http://127.0.0.1:1516/interface',
       this.misc.serialize(data),
@@ -395,13 +432,18 @@ class Interface {
     )
   }
 
+  // Safe Interface
+  async reqs(data: any): Promise<[AxiosResponse<any>, Error]> {
+    type TIRequest = (...params: any[]) => Promise<[AxiosResponse<any>, Error]>
+    const req: TIRequest = this.misc.safe(this.req.bind(this))
+    return req(data)
+  }
+
   // Check Connection
   async link(): Promise<boolean> {
     // test connection
-    let conn = false
-    await this.Interface(null)
-      .catch(e => { conn = false })
-      .then(v => { conn = true })
+    const [, interfaceError] = await this.reqs(null)
+    const conn = !interfaceError
     // check result
     if (this.conn !== conn) {
       const l1 = 'Connection with Python Established'
@@ -410,7 +452,7 @@ class Interface {
       await this.bot.log(log)
       this.conn = conn
       // Send Message to Admin
-      await this.bot.send('anthony', log, 'py_conn_status')
+      await this.bot.sends('anthony', log, 'py_conn_status')
     }
     // return result
     return conn
@@ -442,24 +484,32 @@ class Interface {
 
   // Interface Execute Bot Command
   async execute(req: expressCore.Request) {
-    const error = {
-      done: false,
-      status: 'action not found'
-    }
-    // check request
-    if (!this.misc.typeGuards.isObject(req)) return error
-    if (!this.misc.typeGuards.isObject(req.body)) return error
-    if (typeof req.body.action !== 'string') return error
-    if (req.body.action.length === 0) return error
-    if (!(req.body.action in this.actions)) return error
-    // Execute Action
-    const ip = this.misc.requestIp.getClientIp(req)
-    await this.bot.log(`Exec(api::${req.body.action}) From(${ip})`)
-    const data = await this.interf.actions[req.body.action](req)
-    return {
-      done: true,
-      status: 'executed',
-      data: data
+    let action: string
+    try {
+      // check request
+      if (!this.misc.typeGuards.isObject(req)) throw new Error('bad request')
+      if (!this.misc.typeGuards.isObject(req.body)) throw new Error('bad request')
+      if (!('action' in req.body)) throw new Error('key "action" missing in request')
+      if (typeof req.body.action !== 'string') throw new Error('key "action" must be a string')
+      if (req.body.action.length === 0) throw new Error('key "action" not valid')
+      if (!(req.body.action in this.actions)) throw new Error('action not found')
+      // update reference
+      action = req.body.action
+      // log action to be executed
+      const ip = this.misc.requestIp.getClientIp(req)
+      await this.bot.log(`Exec(interface::${action}) From(${ip})`)
+      // execute action
+      const [data, actionError] = await this.actions[action](req)
+      // throw action error
+      if (actionError) throw actionError
+      // resolve with data
+      return { done: true, data: data }
+    // if error occurred
+    } catch (error) {
+      // log error
+      if (action) await this.bot.log(`Throw(interface::${action}) Catch(${error})`)
+      // reject with error
+      return { done: false, error: error }
     }
   }
 
@@ -471,7 +521,7 @@ class Interface {
     if (typeof func !== 'function') return false
     if (typeof name !== 'string') return false
     if (name.length === 0) return false
-    this.actions[name] = func
+    this.actions[name] = this.misc.safe(func)
     return true
   }
 }
@@ -628,34 +678,50 @@ export default class Bot {
     this.chat = new Chat(this)
 
     // Add else Method to Bot
-    this.add('else', m => null)
+    this.bot.add('else', msg => null)
 
-    // Add send_msg Method to Interface
+    // Add send_msg Action
     this.interf.add('send_msg',
       async req => {
-        if (!this.misc.typeGuards.isObject(req.body)) return
         // fix parameters
         const to = req.body.to || 'demandas_automacao'
         const msg = req.body.msg || 'Mensagem Vazia'
         const log = req.body.log || 'api::send_msg'
         const replyId = req.body.reply_id || null
         // send message
-        const sent = await this.bot.send(to, msg, log, replyId)
-        // if not sent prevent execution
-        if (!sent) return
+        const [sent, sendMessageError] = await this.bot.sends(to, msg, log, replyId)
+        // if not done prevent execution
+        if (sendMessageError) throw sendMessageError
         // set default reply action
-        sent.onReply(message => {
-          this.bot.interf.Interface({
+        sent.onReply(async message => {
+          const json = {
             action: 'on_reply',
             msg_id: sent.id,
             reply: message
-          })
-            .catch(
-              error => this.bot.log(`Throw(api::on_reply) Catch(${error})`)
-            )
+          }
+          const [data, onReplyError] = await this.interf.reqs(json)
+          if (onReplyError) throw onReplyError
+          return data
         })
+        // return message
         return sent
-      })
+      }
+    )
+
+    // Add get_message Action
+    this.interf.add('get_message',
+      async req => {
+        if (!('id' in req.body)) throw new Error('key "id" missing in request')
+        if (typeof req.body.id !== 'string') throw new Error('key "id" must be a string')
+        if (req.body.id.length === 0) throw new Error('key "id" not valid')
+        return this.whapp.getMessageById(req.body.id)
+      }
+    )
+
+    // Add host_device Action
+    this.interf.add('host_device',
+      async req => this.bot.client.getHostDevice()
+    )
   }
 
   /*
@@ -682,15 +748,21 @@ export default class Bot {
 
   // Start App
   async start(session: string): Promise<boolean> {
-    // Create Venom Instance
-    await Venom.create(session)
-      .catch(error => this.bot.log(`Throw(bot::start) Catch(${error})`))
-      .then((client: Venom.Whatsapp) => {
-        if (!client) return
-        this.client = client
-        this.bot.started = true
-      })
-    // Prevent Error
+    try { // Create Venom Instance
+      type TVenomCreate = (session: string) => Promise<[Venom.Whatsapp, Error]>
+      const create: TVenomCreate = this.misc.safe(Venom.create.bind(Venom))
+      const [client, clientError] = await create(session)
+      // Check for Error
+      if (clientError) throw clientError
+      // Assign Client Object to Bot
+      this.client = client
+      this.bot.started = true
+    // If Error Occurred
+    } catch (error) {
+      // Log Error
+      await this.bot.log(`Throw(bot::start) Catch(${error})`)
+    }
+    // Check for Client
     if (!this.client) return false
     // Start Whapp Services
     await this.whapp.start()
@@ -699,7 +771,7 @@ export default class Bot {
     // Log Start of Bot
     await this.bot.log('Avbot::Started')
     // Send Message to Admin
-    await this.send('anthony', 'Node Avbot Started!', 'bot_start')
+    await this.bot.sends('anthony', 'Node Avbot Started!', 'bot_start')
     // Start Interface App
     await this.bot.interf.start()
     // return status
@@ -713,9 +785,8 @@ export default class Bot {
   */
 
   // Send Message Method
-  async send(to: string, msg: TMessageText, log?: string, replyId?: string): Promise<ISent> {
-    return this.whapp.send(to, msg, log, replyId)
-  }
+  get send(): (typeof Whapp.prototype.send) { return this.whapp.send.bind(this.whapp) }
+  get sends(): (typeof Whapp.prototype.sends) { return this.whapp.sends.bind(this.whapp) }
 
   /*
   ##########################################################################################################################
@@ -725,36 +796,58 @@ export default class Bot {
 
   // Execute Bot Command
   async execute(message: ISent): Promise<any> {
-    for (const action of Object.values(this.bot.actions)) {
-      if (action.cond ? action.cond(message) : false) {
-        await this.bot.log(`Exec(bot::${action.name}) From(${message.from})`)
-        return await action.exec(message)
-      }
+    // set initial
+    let actionName: string
+    const logAction = (action: IAction) => {
+      actionName = action.name
+      return this.bot.log(`Exec(bot::${action.name}) From(${message.from})`)
     }
-    // Else Ask Python
-    await this.bot.log(`Exec(bot::else) From(${message.from})`)
-    return await this.bot.actions.else.do(message)
+    try {
+      // Check All Action Conditions
+      for (const action of Object.values(this.bot.actions)) {
+        if (action.cond && action.name !== 'else') {
+          const [cond, condError] = await action.cond(message)
+          if (cond && !condError) {
+            await logAction(action)
+            const [data, actionError] = await action.do(message)
+            if (actionError) throw actionError
+            else return data
+          }
+        }
+      }
+      // do Else
+      const elseAction = this.bot.actions.else
+      await logAction(elseAction)
+      const [data, actionError] = await elseAction.do(message)
+      if (actionError) throw actionError
+      else return data
+    // if error occurred
+    } catch (error) {
+      // log error
+      await this.bot.log(`Throw(bot::${actionName}) Catch(${error})`)
+    }
   }
 
   // Add Bot Action
   add(
     name: string,
-    cond: TExec,
+    inter: TExec,
     exec?: TExec
   ): boolean {
-    if (typeof cond !== 'function') return false
+    if (typeof inter !== 'function') return false
     if (!!exec && typeof exec !== 'function') return false
     if (typeof name !== 'string') return false
     if (name.length === 0) return false
-    let action: IAction = {
+    let action: IAction
+    action = {
       name: name,
-      cond: cond,
-      exec: exec
+      cond: this.misc.safe(inter),
+      do: this.misc.safe(exec)
     }
     if (name === 'else') {
       action = {
         name: name,
-        do: cond
+        do: this.misc.safe(inter)
       }
     }
     this.actions[name] = action

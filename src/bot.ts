@@ -33,7 +33,7 @@ const Lam = new Laminador(Avbot)
 
 // Responde Agradecimento
 Avbot.add('cool_feedback',
-  message => ['obrigado', 'valeu'].includes(message.clean()),
+  message => message.clean().match(/^\s*(obrigado|valeu)\s*$/),
   async message => {
     await message.quote('Estou as ordens! 😉🤝', 'cool_feedback')
   }
@@ -41,7 +41,7 @@ Avbot.add('cool_feedback',
 
 // Producao Trefila
 Avbot.add('prod_trf',
-  message => ['trefila', 'producao trefila'].includes(message.clean()),
+  message => message.clean().match(/^\s*(producao(\s+))?trefila\s*$/),
   async message => {
     await message.quote(Avbot.chat.gotIt, 'got_it')
     await message.send(Lam.getTref(), 'bot::prod_trf')
@@ -50,7 +50,7 @@ Avbot.add('prod_trf',
 
 // Producao Laminador
 Avbot.add('prod_lam',
-  message => ['laminador', 'producao', 'producao laminador'].includes(message.clean()),
+  message => message.clean().match(/^\s*(producao(\s+))?laminador\s*$/),
   async message => {
     await message.quote(Avbot.chat.gotIt, 'got_it')
     await message.send(Lam.getProd(), 'bot::prod_lam')
@@ -59,7 +59,7 @@ Avbot.add('prod_lam',
 
 // Producao do Mes Laminador
 Avbot.add('prod_mes_lam',
-  message => ['producao mes', 'producao do mes', 'producao mes laminador'].includes(message.clean()),
+  message => message.clean().match(/^\s*producao(\s+)(do(\s+))?mes((\s+)laminador)?\s*$/),
   async message => {
     await message.quote(Avbot.chat.gotIt, 'got_it')
     await message.send(Lam.getProdMes(), 'bot::prod_mes_lam')
@@ -75,22 +75,22 @@ Avbot.add('else', async message => {
       await message.send(Avbot.bot.chat.error.network, 'error_in_request')
     })
     .then(async value => {
-      if (!value) {
-        await Avbot.bot.log('Error(admin::exec) Throw(void)')
+      if (!Avbot.misc.typeGuards.isObject(value)) {
+        await Avbot.bot.log('Error(admin::exec) Throw(bad response)')
         await message.send(Avbot.bot.chat.error.network, 'error_in_request')
         return
       }
       await message.quote(Avbot.chat.askPython.finally, 'got_py_response')
-      await message.send(value, 'py_response')
+      await message.send(value.answer, 'py_response')
     })
 })
 
 // Cron Scheduled Messages
 cron.schedule('0 */1 * * *', async () => {
   // Producao Trefila Grupo
-  await Avbot.send('grupo_trefila', Lam.getTref(), 'cron::prod_trf')
+  await Avbot.sends('grupo_trefila', Lam.getTref(), 'cron::prod_trf')
   // Producao Laminador Calegari
-  await Avbot.send('calegari', Lam.getProd(), 'cron::prod_lam_calegari')
+  await Avbot.sends('calegari', Lam.getProd(), 'cron::prod_lam_calegari')
 })
 
 // Create Instance of Venom
