@@ -118,10 +118,10 @@ export default class Miscellaneous {
       // set variables
       let value: ReturnType<typeof func>
       let error: Error
-      const promise = fasync(...params)
       // await then and catch
       await new Promise(resolve => {
-        promise
+        // execute async function
+        fasync(...params)
           .catch(err => {
             error = err
             resolve(null)
@@ -145,16 +145,20 @@ export default class Miscellaneous {
   ): Promise<any> {
     let i = 0
     while (i < repeat) {
+      // wait delay
       if (i > 0) await this.wait(delay)
-      const res = await exec()
-      let cond: boolean | Promise<boolean>
-      try { cond = verify(res) } catch { cond = false }
-      if (this.typeGuards.isPromise(cond)) {
-        await cond
-          .catch(e => { cond = false })
-          .then(v => { cond = !!v })
+      // execute function
+      const [res, error] = await this.safe(exec)()
+      // set verify type
+      let verifys: (res: unknown) => Promise<[boolean, Error]>
+      // if no error occurred
+      if (!error) {
+        verifys = this.safe(verify)
+        // execute verify
+        const [cond, condError] = await verifys(res)
+        // check for result
+        if (cond && !condError) return res
       }
-      if (cond) return res
       i++
     }
     throw Error()

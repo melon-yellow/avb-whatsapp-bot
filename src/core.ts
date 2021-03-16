@@ -222,8 +222,8 @@ class Whapp {
   async getMessageById(id: string): Promise<ISent> {
     const getMessage = () => this.client.getMessageById(id)
     const checkMessage = (obj: unknown) => this.misc.typeGuards.isObject(obj) && !obj.erro
-    const trial = this.misc.try(getMessage, checkMessage)
-    return await new Promise(resolve => {
+    const trial = this.misc.try(getMessage.bind(this), checkMessage.bind(this))
+    return new Promise(resolve => {
       trial
         .catch(error => this.misc.noOp(error) || resolve(null))
         .then(value => resolve(this.setMessage(value)))
@@ -361,7 +361,7 @@ class Whapp {
   ): Promise<[ISent, Error]> {
     type TSend = (...params: TFetchString[]) => Promise<[ISent, Error]>
     const send: TSend = this.misc.safe(this.send.bind(this))
-    return await send(to, msg, log, replyId)
+    return send(to, msg, log, replyId)
   }
 }
 
