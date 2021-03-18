@@ -44,7 +44,7 @@ interface ISentTextObj {
   to: { _serialized: string }
 }
 
-class WhappTypeGuards {
+export class WhappTypeGuards {
   // Check if Is Sent Text Object
   isSentTextObj(obj: unknown): obj is ISentTextObj {
     if (!misc.typeGuards.isObject(obj)) return false
@@ -67,8 +67,8 @@ type TExec = (m: ISent) => any
 type TAExec = (m: ISent) => Promise<[any, Error]>
 
 // Interface Action Interface
-type IInterfaceAction = (req: expressCore.Request) => any
-type IAInterfaceAction = (req: expressCore.Request) => Promise<[any, Error]>
+type IAPIAction = (req: expressCore.Request) => any
+type IAAPIAction = (req: expressCore.Request) => Promise<[any, Error]>
 
 // Action Interface
 interface IAction {
@@ -83,7 +83,7 @@ interface IAction {
 ##########################################################################################################################
 */
 
-class Whapp {
+export class Whapp {
   bot: Bot
   me: VenomHostDevice.Me
   replyables: Record<string, TAExec>
@@ -367,17 +367,16 @@ class Whapp {
 
 /*
 ##########################################################################################################################
-#                                                     INTERFACE CLASS                                                    #
+#                                                           API CLASS                                                    #
 ##########################################################################################################################
 */
 
-// Interface Class
-class Interface {
+// API Class
+export class API {
   bot: Bot
-  conn: boolean
   auth: string
   app: expressCore.Express
-  actions: Record<string, IAInterfaceAction>
+  actions: Record<string, IAAPIAction>
 
   constructor (bot: Bot) {
     Object.defineProperty(this, 'bot',
@@ -385,8 +384,6 @@ class Interface {
     )
     // Interface Actions Object
     this.actions = {}
-    // Set Connection Status Object
-    this.conn = undefined
     // Set Authentication
     this.auth = 'ert2tyt3tQ3423rubu99ibasid8hya8da76sd'
     // Define App
@@ -398,9 +395,9 @@ class Interface {
     )
     this.app.use(this.misc.express.json())
     // Set Bot Interface
-    this.app.post('/interface', async (req, res) => {
+    this.app.post('/bot', async (req, res) => {
       // Execute Functionality
-      const response = await this.interf.execute(req)
+      const response = await this.api.execute(req)
       // Send Response
       res.send(JSON.stringify(
         this.misc.serialize(response)
@@ -410,18 +407,18 @@ class Interface {
 
   /*
   ##########################################################################################################################
-  #                                                    INTERFACE METHODS                                                   #
+  #                                                          API METHODS                                                   #
   ##########################################################################################################################
   */
 
   // Cycle Reference
-  get interf() { return this }
+  get api() { return this }
   get misc() { return this.bot.misc }
 
-  // Interface
-  async req(data: any): Promise<AxiosResponse<any>> {
+  // Request
+  async req(url: string, data: any): Promise<AxiosResponse<any>> {
     return this.misc.axios.post(
-      'http://127.0.0.1:1516/interface',
+      url,
       this.misc.serialize(data),
       {
         auth: {
@@ -432,30 +429,11 @@ class Interface {
     )
   }
 
-  // Safe Interface
-  async reqs(data: any): Promise<[AxiosResponse<any>, Error]> {
+  // Safe Request
+  async reqs(url: string, data: any): Promise<[AxiosResponse<any>, Error]> {
     type TIRequest = (...params: any[]) => Promise<[AxiosResponse<any>, Error]>
     const req: TIRequest = this.misc.safe(this.req.bind(this))
-    return req(data)
-  }
-
-  // Check Connection
-  async link(): Promise<boolean> {
-    // test connection
-    const [, interfaceError] = await this.reqs(null)
-    const conn = !interfaceError
-    // check result
-    if (this.conn !== conn) {
-      const l1 = 'Connection with Python Established'
-      const l2 = 'No Connection with Python'
-      const log = conn ? l1 : l2
-      await this.bot.log(log)
-      this.conn = conn
-      // Send Message to Admin
-      await this.bot.sends('anthony', log, 'py_conn_status')
-    }
-    // return result
-    return conn
+    return req(url, data)
   }
 
   // Start Interface App
@@ -463,14 +441,7 @@ class Interface {
     try {
       // listen on port 1615
       this.app.listen(1615)
-      // check link constantly
-      const cycle = async () => {
-        while (true) {
-          await this.misc.wait(1)
-          await this.link()
-        }
-      }
-      cycle()
+    // if error occurred
     } catch { return false }
     // return success
     return true
@@ -478,7 +449,7 @@ class Interface {
 
   /*
   ##########################################################################################################################
-  #                                               INTERFACE EXECUTION METHODS                                              #
+  #                                                    API EXECUTION METHODS                                               #
   ##########################################################################################################################
   */
 
@@ -497,7 +468,7 @@ class Interface {
       action = req.body.action
       // log action to be executed
       const ip = this.misc.requestIp.getClientIp(req)
-      await this.bot.log(`Exec(interface::${action}) From(${ip})`)
+      await this.bot.log(`Exec(api::${action}) From(${ip})`)
       // execute action
       const [data, actionError] = await this.actions[action](req)
       // throw action error
@@ -507,7 +478,7 @@ class Interface {
     // if error occurred
     } catch (error) {
       // log error
-      if (action) await this.bot.log(`Throw(interface::${action}) Catch(${error})`)
+      if (action) await this.bot.log(`Throw(api::${action}) Catch(${error})`)
       // reject with error
       return { done: false, error: error }
     }
@@ -516,7 +487,7 @@ class Interface {
   // Add Bot Interface Action
   add(
     name: string,
-    func: IInterfaceAction
+    func: IAPIAction
   ): boolean {
     if (typeof func !== 'function') return false
     if (typeof name !== 'string') return false
@@ -533,7 +504,7 @@ class Interface {
 */
 
 // Defines Chat Object
-class Chat {
+export class Chat {
   bot: Bot
 
   constructor (bot: Bot) {
@@ -660,9 +631,9 @@ export default class Bot {
   client: Venom.Whatsapp
   actions: Record<string, IAction>
   started: boolean
-  interf: Interface
   whapp: Whapp
   chat: Chat
+  api: API
 
   constructor () {
     // Get Miscellaneous Methods
@@ -673,21 +644,22 @@ export default class Bot {
     this.actions = {}
 
     // Nest Objects
-    this.interf = new Interface(this)
     this.whapp = new Whapp(this)
     this.chat = new Chat(this)
+    this.api = new API(this)
 
     // Add else Method to Bot
     this.bot.add('else', msg => null)
 
     // Add send_msg Action
-    this.interf.add('send_msg',
+    this.api.add('send_msg',
       async req => {
         // fix parameters
         const to = req.body.to || 'demandas_automacao'
         const msg = req.body.msg || 'Mensagem Vazia'
         const log = req.body.log || 'api::send_msg'
         const replyId = req.body.reply_id || null
+        const replyUrl = req.body.reply_url || null
         // send message
         const [sent, sendMessageError] = await this.bot.sends(to, msg, log, replyId)
         // if not done prevent execution
@@ -699,7 +671,7 @@ export default class Bot {
             msg_id: sent.id,
             reply: message
           }
-          const [data, onReplyError] = await this.interf.reqs(json)
+          const [data, onReplyError] = await this.api.reqs(replyUrl, json)
           if (onReplyError) throw onReplyError
           return data
         })
@@ -709,7 +681,7 @@ export default class Bot {
     )
 
     // Add get_message Action
-    this.interf.add('get_message',
+    this.api.add('get_message',
       async req => {
         if (!('id' in req.body)) throw new Error('key "id" missing in request')
         if (typeof req.body.id !== 'string') throw new Error('key "id" must be a string')
@@ -719,7 +691,7 @@ export default class Bot {
     )
 
     // Add host_device Action
-    this.interf.add('host_device',
+    this.api.add('host_device',
       async req => this.bot.client.getHostDevice()
     )
   }
@@ -773,7 +745,7 @@ export default class Bot {
     // Send Message to Admin
     await this.bot.sends('anthony', 'Node Avbot Started!', 'bot_start')
     // Start Interface App
-    await this.bot.interf.start()
+    await this.bot.api.start()
     // return status
     return this.bot.started
   }

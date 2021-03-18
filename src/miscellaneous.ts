@@ -18,7 +18,7 @@ import basicAuth from 'express-basic-auth'
 */
 
 // TypeGuards Class
-class TypeGuards {
+export class TypeGuards {
   // Check if Is Object
   isObject(obj: unknown): obj is Record<string, any> {
     if (typeof obj === 'object') return true
