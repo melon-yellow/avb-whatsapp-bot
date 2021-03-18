@@ -1,6 +1,6 @@
 {
   "name": "avbot",
-  "version": "1.6.4",
+  "version": "1.9.3",
   "description": "Whatsapp Bot API / Powered by Venom-Bot",
   "type": "module",
   "scripts": {

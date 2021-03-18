@@ -3,7 +3,7 @@
 #                                                         AVBOT                                                          #
 ##########################################################################################################################
 #                                                                                                                        #
-#                                                     Avbot v1.6.4                                                       #
+#                                                     Avbot v1.9.3                                                       #
 #                                          Multi-language API for Whatsapp Bot                                           #
 #                             ---------------- Python3 -- NodeJS -- MySQL ----------------                               #
 #                                             This is a Development Server                                               #
