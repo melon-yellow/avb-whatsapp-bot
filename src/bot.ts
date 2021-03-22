@@ -110,10 +110,10 @@ cron.schedule('0 */1 * * *', async () => {
 */
 
 // Create Instance of Venom
-Avbot.start('avbot')
+await Avbot.start('avbot')
 
 // Start Python API
-pyApi.start()
+await pyApi.start()
 
 /*
 ##########################################################################################################################
