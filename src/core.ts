@@ -188,6 +188,14 @@ export class Whapp {
 
   // get contacts list
   contactsList(flag?: number): Record<string, string> {
+    // check if directory exists
+    if (!this.misc.fs.existsSync('./private')) {
+      this.misc.fs.mkdirSync('./private')
+    }
+    // check if file exists
+    if (!this.misc.fs.existsSync('./private/contacts.bot.json')) {
+      this.misc.fs.writeFileSync('./private/contacts.bot.json', '{}')
+    }
     // get contacts from json
     let contacts: Record<string, string> = JSON.parse(
       this.misc.fs.readFileSync('./private/contacts.bot.json').toString()
