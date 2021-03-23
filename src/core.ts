@@ -44,6 +44,7 @@ interface ISentTextObj {
   to: { _serialized: string }
 }
 
+// Type Guards
 export class WhappTypeGuards {
   // Check if Is Sent Text Object
   isSentTextObj(obj: unknown): obj is ISentTextObj {
@@ -467,7 +468,7 @@ export class API {
       // update reference
       action = req.body.action
       // log action to be executed
-      const ip = this.misc.requestIp.getClientIp(req)
+      const ip = this.misc.requestIp.getClientIp(req).replace('::ffff:', '')
       await this.bot.log(`Exec(api::${action}) From(${ip})`)
       // execute action
       const [data, actionError] = await this.actions[action](req)
