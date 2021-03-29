@@ -33,7 +33,7 @@ type TFetchString = string | Promise<string> | (() => string | Promise<string>)
 interface ISent extends Venom.Message {
   readonly whapp: Whapp
   readonly quotedMsg: ISent
-  send(msg: TFetchString, log?: TFetchString, replyId?: TFetchString): Promise<ISent>
+  send(msg: TFetchString, log?: TFetchString, quoteId?: TFetchString): Promise<ISent>
   quote(msg: TFetchString, log?: TFetchString): Promise<ISent>
   onReply(exec: TExec): boolean
   clean(): string
@@ -267,8 +267,8 @@ export class Whapp {
           quotedMsg: whapp.setMessage(sent.quotedMsgObj),
           quotedMsgObj: null,
           // Send Message to Chat
-          async send(msg: TFetchString, log?: TFetchString, replyId?: TFetchString): Promise<ISent> {
-            return this.whapp.send(this.from, msg, log, replyId)
+          async send(msg: TFetchString, log?: TFetchString, quoteId?: TFetchString): Promise<ISent> {
+            return this.whapp.send(this.from, msg, log, quoteId)
           },
           // Quote Message
           async quote(msg: TFetchString, log?: TFetchString): Promise<ISent> {
@@ -308,12 +308,12 @@ export class Whapp {
   }
 
   // Send Reply Method
-  async sendReply(phoneNumber: string, text: string, replyId: string): Promise<ISent> {
+  async sendReply(phoneNumber: string, text: string, quoteId: string): Promise<ISent> {
     // check if message exists
-    const replyTarget = await this.getMessageById(replyId)
-    if (!replyTarget) replyId = ''
+    const replyTarget = await this.getMessageById(quoteId)
+    if (!replyTarget) quoteId = ''
     // then send reply
-    const reply = await this.client.reply(phoneNumber, text, replyId)
+    const reply = await this.client.reply(phoneNumber, text, quoteId)
     // get message by id
     return await this.getMessageById(reply.id)
   }
@@ -323,7 +323,7 @@ export class Whapp {
     to: TFetchString,
     text: TFetchString,
     log?: TFetchString,
-    replyId?: TFetchString
+    quoteId?: TFetchString
   ): Promise<ISent> {
     // check if bot has started
     if (!this.bot.started) throw new Error('bot not started')
@@ -331,21 +331,21 @@ export class Whapp {
     to = await this.fetch(to)
     text = await this.fetch(text)
     log = await this.fetch(log)
-    replyId = await this.fetch(replyId)
+    quoteId = await this.fetch(quoteId)
     // check params consistency
     if (typeof to !== 'string') throw new Error('argument "to" not valid')
     if (typeof text !== 'string') throw new Error('argument "text" not valid')
     if (log && typeof log !== 'string') throw new Error('argument "log" not valid')
-    if (replyId && typeof replyId !== 'string') throw new Error('argument "replyId" not valid')
+    if (quoteId && typeof quoteId !== 'string') throw new Error('argument "quoteId" not valid')
     // get number from contacts
     const phoneNumber = this.contact(to)
     // set message object
     let send: (...params: string[]) => Promise<[Venom.Message, Error]>
     const params = [phoneNumber, text]
-    if (!replyId) send = this.misc.safe(this.sendText.bind(this))
+    if (!quoteId) send = this.misc.safe(this.sendText.bind(this))
     else {
       send = this.misc.safe(this.sendReply.bind(this))
-      params.push(replyId)
+      params.push(quoteId)
     }
     // send message
     const [data, sendMessageError] = await send(...params)
@@ -364,13 +364,13 @@ export class Whapp {
   // Safe Send Message Method
   async sends(
     to: TFetchString,
-    msg: TFetchString,
+    text: TFetchString,
     log?: TFetchString,
-    replyId?: TFetchString
+    quoteId?: TFetchString
   ): Promise<[ISent, Error]> {
     type TSend = (...params: TFetchString[]) => Promise<[ISent, Error]>
     const send: TSend = this.misc.safe(this.send.bind(this))
-    return send(to, msg, log, replyId)
+    return send(to, text, log, quoteId)
   }
 }
 
@@ -665,12 +665,12 @@ export default class Bot {
       async req => {
         // fix parameters
         const to = req.body.to || 'demandas_automacao'
-        const msg = req.body.msg || 'Mensagem Vazia'
+        const text = req.body.text || 'Mensagem Vazia'
         const log = req.body.log || 'api::send_msg'
-        const replyId = req.body.reply_id || null
+        const quoteId = req.body.quote_id || null
         const replyUrl = req.body.reply_url || null
         // send message
-        const [sent, sendMessageError] = await this.bot.sends(to, msg, log, replyId)
+        const [sent, sendMessageError] = await this.bot.sends(to, text, log, quoteId)
         // if not done prevent execution
         if (sendMessageError) throw sendMessageError
         // set default reply action
