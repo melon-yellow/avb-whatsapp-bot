@@ -26,7 +26,7 @@ export default class Laminador {
     })
   }
 
-  putData (quest: Record<string, any>): Promise<string> {
+  postData (quest: Record<string, any>): Promise<string> {
     return new Promise((resolve, reject) => {
       this.bot.misc.axios.post(
         'http://127.0.0.1:3000/questions',
@@ -139,7 +139,7 @@ export default class Laminador {
               '------------------------------------------------------\n'
             for (const i in dados) {
               const data = dados[i].data
-              let prod = dados[i].peso / 1000
+              let prod = dados[i].peso
               prodMes += prod
               prod = this.misc.round(prod)
               message += `${data} => *${prod} Ton*\n`

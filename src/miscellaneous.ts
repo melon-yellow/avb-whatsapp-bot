@@ -10,6 +10,7 @@ import axios from 'axios'
 import express from 'express'
 import requestIp from 'request-ip'
 import basicAuth from 'express-basic-auth'
+import cron from 'node-cron'
 
 /*
 ##########################################################################################################################
@@ -52,6 +53,7 @@ export default class Miscellaneous {
   express = express
   requestIp = requestIp
   basicAuth = basicAuth
+  cron = cron
 
   // Type Guards
   typeGuards = new TypeGuards()

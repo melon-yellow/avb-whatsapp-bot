@@ -18,7 +18,6 @@
 import Bot from './core.js'
 import Laminador from './laminador.js'
 import PyAPI from './pyapi.js'
-import cron from 'node-cron'
 
 /*
 ##########################################################################################################################
@@ -79,7 +78,7 @@ Avbot.add('prod_mes_lam',
 // Responde Pergunta Geral do Usuario
 Avbot.add('else', async message => {
   await message.quote(Avbot.chat.askPython.asking, 'asking_py')
-  Lam.putData({ question: message.clean() })
+  Lam.postData({ question: message.clean() })
     .catch(async error => {
       await Avbot.bot.log(`Error(admin::exec) Throw(${error})`)
       await message.send(Avbot.bot.chat.error.network, 'error_in_request')
@@ -96,7 +95,7 @@ Avbot.add('else', async message => {
 })
 
 // Cron Scheduled Messages
-cron.schedule('0 */1 * * *', async () => {
+Avbot.bot.misc.cron.schedule('7 */1 * * *', async () => {
   // Producao Trefila Grupo
   await Avbot.sends('grupo_trefila', Lam.getTref(), 'cron::prod_trf')
   // Producao Laminador Calegari
