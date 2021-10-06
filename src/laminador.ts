@@ -20,19 +20,19 @@ export default class Laminador {
 
   getData (url: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.bot.misc.axios.get(url)
-        .catch(err => this.misc.noOp(err) || reject(this.bot.chat.error.network))
+      this.bot.api.reqs(url, null)
+        .catch(err => (e => null)(err) || reject(this.bot.chat.error.network))
         .then(val => val ? resolve(val.data) : reject(this.bot.chat.error.network))
     })
   }
 
   postData (quest: Record<string, any>): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.bot.misc.axios.post(
-        'http://127.0.0.1:3000/questions',
+      this.bot.api.reqs(
+        'http://localhost:3000/questions',
         quest
       )
-        .catch(err => this.misc.noOp(err) || reject(this.bot.chat.error.network))
+        .catch(err => (e => null)(err) || reject(this.bot.chat.error.network))
         .then(val => val ? resolve(val.data) : reject(this.bot.chat.error.network))
     })
   }
@@ -47,8 +47,8 @@ export default class Laminador {
     return new Promise(resolve => {
       // Resquest Data
       Promise.all([
-        this.getData('http://127.0.0.1:3000/api/furnace'),
-        this.getData('http://127.0.0.1:3000/api/mill')
+        this.getData('http://localhost:3000/api/furnace'),
+        this.getData('http://localhost:3000/api/mill')
       ])
         .catch(erro => resolve(erro))
         .then(dados => {
@@ -56,19 +56,19 @@ export default class Laminador {
           try {
             // Parse Data
             let blbp = dados[0].QTD_PECAS
-            if (dados[1].COBBLES > 0) blbp = this.misc.round(blbp / dados[1].COBBLES)
-            const pt = this.misc.round(dados[0].PESO_TOTAL)
-            const rd = this.misc.round(dados[0].RITIMO_DIA)
-            const hap = this.misc.round(dados[0].ATUAL_HORA_PESO, 1)
-            const rh = this.misc.round(dados[0].RITIMO_HORA, 1)
-            const uhp = this.misc.round(dados[0].ULTIMA_HORA_PESO, 1)
-            const vm = this.misc.round(dados[0].VAZAO_MEDIA, 1)
-            const ld = this.misc.round(dados[0].QTD_PECAS)
-            const lha = this.misc.round(dados[0].ATUAL_HORA_PECAS)
-            const luh = this.misc.round(dados[0].ULTIMA_HORA_PECAS)
-            const tp = this.misc.round(dados[0].TEMPO_PARADO)
-            const u = this.misc.round(dados[0].UTIL * 100, 1)
-            const cb = this.misc.round(dados[1].COBBLES)
+            if (dados[1].COBBLES > 0) blbp = this.misc.numbers.round(blbp / dados[1].COBBLES)
+            const pt = this.misc.numbers.round(dados[0].PESO_TOTAL)
+            const rd = this.misc.numbers.round(dados[0].RITIMO_DIA)
+            const hap = this.misc.numbers.round(dados[0].ATUAL_HORA_PESO, 1)
+            const rh = this.misc.numbers.round(dados[0].RITIMO_HORA, 1)
+            const uhp = this.misc.numbers.round(dados[0].ULTIMA_HORA_PESO, 1)
+            const vm = this.misc.numbers.round(dados[0].VAZAO_MEDIA, 1)
+            const ld = this.misc.numbers.round(dados[0].QTD_PECAS)
+            const lha = this.misc.numbers.round(dados[0].ATUAL_HORA_PECAS)
+            const luh = this.misc.numbers.round(dados[0].ULTIMA_HORA_PECAS)
+            const tp = this.misc.numbers.round(dados[0].TEMPO_PARADO)
+            const u = this.misc.numbers.round(dados[0].UTIL * 100, 1)
+            const cb = this.misc.numbers.round(dados[1].COBBLES)
 
             // Create Message String
             const message = '\n' +
@@ -114,7 +114,7 @@ export default class Laminador {
 
   async getProdMes (): Promise<string> {
     return new Promise(resolve => {
-      this.getData('http://127.0.0.1:3000/api/prod_lam_quente')
+      this.getData('http://localhost:3000/api/prod_lam_quente')
         .catch(erro => resolve(erro))
         .then(dados => {
           if (!dados) return
@@ -141,11 +141,11 @@ export default class Laminador {
               const data = dados[i].data
               let prod = dados[i].peso
               prodMes += prod
-              prod = this.misc.round(prod)
+              prod = this.misc.numbers.round(prod)
               message += `${data} => *${prod} Ton*\n`
             }
-            const prodAvg = this.misc.round(prodMes / dados.length)
-            prodMes = this.misc.round(prodMes)
+            const prodAvg = this.misc.numbers.round(prodMes / dados.length)
+            prodMes = this.misc.numbers.round(prodMes)
             message += '' +
               '------------------------------------------------------\n' +
               `💰 Produção do mês: *${prodMes} Ton*\n` +
@@ -174,33 +174,33 @@ export default class Laminador {
   async getTref (): Promise<string> {
     return new Promise(resolve => {
       // Request Data
-      this.getData('http://127.0.0.1:3000/api/trf')
+      this.getData('http://localhost:3000/api/trf')
         .catch(erro => resolve(erro))
         .then(dados => {
           if (!dados) return
           try {
             // Parse Data
-            const p02 = this.misc.round(!dados.p02 ? 0 : (dados.p02 / 1000), 1)
-            const p03 = this.misc.round(!dados.p03 ? 0 : (dados.p03 / 1000), 1)
-            const p04 = this.misc.round(!dados.p04 ? 0 : (dados.p04 / 1000), 1)
-            const p05 = this.misc.round(!dados.p05 ? 0 : (dados.p05 / 1000), 1)
-            const ps = this.misc.round(p02 + p03 + p04 + p05)
-            const u02 = this.misc.round(!dados.u02 ? 0 : (dados.u02 * 100), 1)
-            const u03 = this.misc.round(!dados.u03 ? 0 : (dados.u03 * 100), 1)
-            const u04 = this.misc.round(!dados.u04 ? 0 : (dados.u04 * 100), 1)
-            const u05 = this.misc.round(!dados.u05 ? 0 : (dados.u05 * 100), 1)
-            const us = this.misc.round((u02 + u03 + u04 + u05) / 4)
-            const t02 = this.misc.round(!dados.t02 ? 0 : (dados.t02 / 60), 1)
-            const t03 = this.misc.round(!dados.t03 ? 0 : (dados.t03 / 60), 1)
-            const t04 = this.misc.round(!dados.t04 ? 0 : (dados.t04 / 60), 1)
-            const t05 = this.misc.round(!dados.t05 ? 0 : (dados.t05 / 60), 1)
-            const ts = this.misc.round(t02 + t03 + t04 + t05)
-            const pt02 = this.misc.round(0.04000 * (u02 / 100) * (dados.s / 60), 2)
-            const pt03 = this.misc.round(0.05714 * (u03 / 100) * (dados.s / 60), 2)
-            const pt04 = this.misc.round(0.05000 * (u04 / 100) * (dados.s / 60), 2)
-            const pt05 = this.misc.round(0.04000 * (u05 / 100) * (dados.s / 60), 2)
-            const pts = this.misc.round(pt02 + pt03 + pt04 + pt05)
-            const rpts = this.misc.round(86400 * (pts / dados.s), 1)
+            const p02 = this.misc.numbers.round(!dados.p02 ? 0 : (dados.p02 / 1000), 1)
+            const p03 = this.misc.numbers.round(!dados.p03 ? 0 : (dados.p03 / 1000), 1)
+            const p04 = this.misc.numbers.round(!dados.p04 ? 0 : (dados.p04 / 1000), 1)
+            const p05 = this.misc.numbers.round(!dados.p05 ? 0 : (dados.p05 / 1000), 1)
+            const ps = this.misc.numbers.round(p02 + p03 + p04 + p05)
+            const u02 = this.misc.numbers.round(!dados.u02 ? 0 : (dados.u02 * 100), 1)
+            const u03 = this.misc.numbers.round(!dados.u03 ? 0 : (dados.u03 * 100), 1)
+            const u04 = this.misc.numbers.round(!dados.u04 ? 0 : (dados.u04 * 100), 1)
+            const u05 = this.misc.numbers.round(!dados.u05 ? 0 : (dados.u05 * 100), 1)
+            const us = this.misc.numbers.round((u02 + u03 + u04 + u05) / 4)
+            const t02 = this.misc.numbers.round(!dados.t02 ? 0 : (dados.t02 / 60), 1)
+            const t03 = this.misc.numbers.round(!dados.t03 ? 0 : (dados.t03 / 60), 1)
+            const t04 = this.misc.numbers.round(!dados.t04 ? 0 : (dados.t04 / 60), 1)
+            const t05 = this.misc.numbers.round(!dados.t05 ? 0 : (dados.t05 / 60), 1)
+            const ts = this.misc.numbers.round(t02 + t03 + t04 + t05)
+            const pt02 = this.misc.numbers.round(0.04000 * (u02 / 100) * (dados.s / 60), 2)
+            const pt03 = this.misc.numbers.round(0.05714 * (u03 / 100) * (dados.s / 60), 2)
+            const pt04 = this.misc.numbers.round(0.05000 * (u04 / 100) * (dados.s / 60), 2)
+            const pt05 = this.misc.numbers.round(0.04000 * (u05 / 100) * (dados.s / 60), 2)
+            const pts = this.misc.numbers.round(pt02 + pt03 + pt04 + pt05)
+            const rpts = this.misc.numbers.round(86400 * (pts / dados.s), 1)
 
             // Create Message String
             const message = '\n' +

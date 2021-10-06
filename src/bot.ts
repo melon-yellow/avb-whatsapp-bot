@@ -18,6 +18,7 @@
 import Bot from './core.js'
 import Laminador from './laminador.js'
 import PyAPI from './pyapi.js'
+import cron from 'node-cron'
 
 /*
 ##########################################################################################################################
@@ -83,19 +84,19 @@ Avbot.add('else', async message => {
       await Avbot.bot.log(`Error(admin::exec) Throw(${error})`)
       await message.send(Avbot.bot.chat.error.network, 'error_in_request')
     })
-    .then(async value => {
-      if (!Avbot.misc.typeGuards.isObject(value)) {
+    .then(async answer => {
+      if (!Avbot.misc.guards.is.string(answer)) {
         await Avbot.bot.log('Error(admin::exec) Throw(bad response)')
         await message.send(Avbot.bot.chat.error.network, 'error_in_request')
         return
       }
       await message.quote(Avbot.chat.askPython.finally, 'got_py_response')
-      await message.send(value.answer, 'py_response')
+      await message.send(answer, 'py_response')
     })
 })
 
 // Cron Scheduled Messages
-Avbot.bot.misc.cron.schedule('7 */1 * * *', async () => {
+cron.schedule('7 */1 * * *', async () => {
   // Producao Trefila Grupo
   await Avbot.sends('grupo_trefila', Lam.getTref(), 'cron::prod_trf')
   // Producao Laminador Calegari

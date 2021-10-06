@@ -19,7 +19,7 @@ export default class PyAPI {
     )
 
     // Set Python API Address
-    this.pyaddr = 'http://127.0.0.1:1516/ibot'
+    this.pyaddr = 'http://localhost:1516/ibot'
 
     // Set Connection Status Object
     this.conn = undefined
@@ -53,7 +53,7 @@ export default class PyAPI {
     try {
       const cycle = async () => {
         while (true) {
-          await this.misc.wait(1)
+          await this.misc.sync.wait(1000)
           await this.link()
         }
       }
