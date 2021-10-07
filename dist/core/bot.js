@@ -66,6 +66,9 @@ export class API {
   get misc() {
     return this.bot.misc;
   }
+  get axios() {
+    return axios;
+  }
   // Request
   async req(url, data) {
     return axios.post(url, this.misc.sets.serialize(data), {

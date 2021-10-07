@@ -287,22 +287,22 @@ export default class Whapp {
   ##########################################################################################################################
   */
   // Send Text Method
-  async sendText(phoneNumber, text) {
+  async sendText(to, text) {
     // send message
-    const sent = await this.client.sendText(phoneNumber, text);
+    const sent = await this.client.sendText(to, text);
     if (!this.typeGuards.isSentTextObj(sent))
       throw new Error('message not sent');
     // get message by id
     return this.getMessageById(sent.to._serialized);
   }
   // Send Reply Method
-  async sendReply(phoneNumber, text, quoteId) {
+  async sendReply(to, text, quoteId) {
     // check if message exists
     const replyTarget = await this.getMessageById(quoteId);
     if (!replyTarget)
       quoteId = '';
     // send reply
-    const reply = await this.client.reply(phoneNumber, text, quoteId);
+    const reply = await this.client.reply(to, text, quoteId);
     if (!this.typeGuards.isSentTextObj(reply))
       throw new Error('message not sent');
     // get message by id

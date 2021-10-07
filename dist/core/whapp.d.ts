@@ -42,8 +42,8 @@ export default class Whapp {
   contact(to: string, flag ? : number): string;
   getMessageById(id: string): Promise < ISent > ;
   setMessage(sent: Venom.Message): ISent;
-  sendText(phoneNumber: string, text: string): Promise < ISent > ;
-  sendReply(phoneNumber: string, text: string, quoteId: string): Promise < ISent > ;
+  sendText(to: string, text: string): Promise < ISent > ;
+  sendReply(to: string, text: string, quoteId: string): Promise < ISent > ;
   send(to: TFetchString, text: TFetchString, log ? : TFetchString, quoteId ? : TFetchString): Promise < ISent > ;
   sends(to: TFetchString, text: TFetchString, log ? : TFetchString, quoteId ? : TFetchString): Promise < [ISent, Error] > ;
 }

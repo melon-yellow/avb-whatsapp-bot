@@ -22,6 +22,7 @@ export declare class API {
   constructor(bot: Bot);
   get api(): this;
   get misc(): Miscellaneous;
+  get axios(): import("axios").AxiosStatic;
   req(url: string, data: any): Promise < AxiosResponse < any >> ;
   reqs(url: string, data: any): Promise < [AxiosResponse < any > , Error] > ;
   start(): Promise < boolean > ;

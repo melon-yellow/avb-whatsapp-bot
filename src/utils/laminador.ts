@@ -20,7 +20,7 @@ export default class Laminador {
 
   getData (url: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.bot.api.reqs(url, null)
+      this.bot.api.axios.get(url)
         .catch(err => (e => null)(err) || reject(this.bot.chat.error.network))
         .then(val => val ? resolve(val.data) : reject(this.bot.chat.error.network))
     })
@@ -28,7 +28,7 @@ export default class Laminador {
 
   postData (quest: Record<string, any>): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.bot.api.reqs(
+      this.bot.api.axios.post(
         'http://localhost:3000/questions',
         quest
       )

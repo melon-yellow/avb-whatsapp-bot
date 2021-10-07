@@ -102,6 +102,7 @@ export class API {
   // Cycle Reference
   get api() { return this }
   get misc() { return this.bot.misc }
+  get axios() { return axios }
 
   // Request
   async req(url: string, data: any): Promise<AxiosResponse<any>> {
