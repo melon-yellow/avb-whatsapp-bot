@@ -5,22 +5,20 @@
 */
 // Import Venom
 import Venom from 'venom-bot';
-// Import Miscellaneous
-import Miscellaneous from 'ts-misc';
 // Import FS
 import fs from 'fs';
-/*
-##########################################################################################################################
-#                                                    MISCELLANEOUS CLASS                                                 #
-##########################################################################################################################
-*/
-// New Miscellaneous Object
-const misc = new Miscellaneous();
-const is = misc.guards.is;
 // Type Guards
 export class WhappTypeGuards {
+  constructor(bot) {
+    Object.defineProperty(this, 'bot', {
+      get() {
+        return bot;
+      }
+    });
+  }
   // Check if Is Sent Text Object
   isSentTextObj(obj) {
+    const is = this.bot.misc.guards.is;
     if (!is.object(obj))
       return false;
     else if (!is.in(obj, 'to'))
@@ -42,7 +40,6 @@ export class WhappTypeGuards {
 */
 export default class Whapp {
   constructor(bot) {
-    this.typeGuards = new WhappTypeGuards();
     Object.defineProperty(this, 'bot', {
       get() {
         return bot;
@@ -50,6 +47,7 @@ export default class Whapp {
     });
     // Set Replyables List
     this.replyables = {};
+    this.typeGuards = new WhappTypeGuards(this.bot);
   }
   // Cycle Reference
   get whapp() {
@@ -73,7 +71,6 @@ export default class Whapp {
         throw clientError;
       // Assign Client Object to Bot
       this.client = client;
-      this.bot.started = true;
       // If Error Occurred
     } catch (error) {
       // Log Error
@@ -81,9 +78,6 @@ export default class Whapp {
     }
     // Check for Client
     if (!this.client)
-      return false;
-    // check if bot started
-    if (!this.bot.started)
       return false;
     // get host data
     const hostDevice = await this.client.getHostDevice();
@@ -100,6 +94,7 @@ export default class Whapp {
   */
   // Get Message Method
   async onMessage(message) {
+    const is = this.bot.misc.guards.is;
     if (!this.bot.started)
       return;
     else if (!is.object(message))
@@ -120,6 +115,7 @@ export default class Whapp {
   }
   // Get Reply Method
   async onReply(message) {
+    const is = this.bot.misc.guards.is;
     if (!message.quotedMsg)
       return;
     const replyable = message.quotedMsg.id;
@@ -129,6 +125,7 @@ export default class Whapp {
   }
   // Add On-Reply Action
   addReplyable(sentId, exec) {
+    const is = this.bot.misc.guards.is;
     if (!is.function(exec))
       return false;
     this.replyables[sentId] = this.misc.handle.safe(exec);
@@ -141,6 +138,7 @@ export default class Whapp {
   */
   // fetch data for message
   async fetch(data) {
+    const is = this.bot.misc.guards.is;
     // Set Resolution Variable
     let resolution = null;
     // check type-of input
@@ -201,6 +199,7 @@ export default class Whapp {
   }
   // Get Message By Id
   async getMessageById(id) {
+    const is = this.bot.misc.guards.is;
     const getMessage = () => this.client.getMessageById(id);
     const checkMessage = (obj) => is.object(obj) && !obj.erro;
     const trial = this.misc.handle.repeat(getMessage.bind(this), checkMessage.bind(this));
@@ -217,6 +216,7 @@ export default class Whapp {
   */
   // Message Constructor
   setMessage(sent) {
+    const is = this.bot.misc.guards.is;
     // Prevent Empty Message Objects
     if (!sent || !is.object(sent))
       return;
@@ -294,6 +294,7 @@ export default class Whapp {
   }
   // Send Message Method
   async send(to, text, log, quoteId) {
+    const is = this.bot.misc.guards.is;
     // check if bot has started
     if (!this.bot.started)
       throw new Error('bot not started');

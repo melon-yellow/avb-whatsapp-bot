@@ -1,6 +1,5 @@
 import Venom from 'venom-bot';
 import type VenomHostDevice from 'venom-bot/dist/api/model/host-device';
-import Miscellaneous from 'ts-misc';
 import type Bot from './bot.js';
 import type {
   TExec,
@@ -21,6 +20,8 @@ export interface ISentTextObj {
   };
 }
 export declare class WhappTypeGuards {
+  bot: Bot;
+  constructor(bot: Bot);
   isSentTextObj(obj: unknown): obj is ISentTextObj;
 }
 export default class Whapp {
@@ -31,7 +32,7 @@ export default class Whapp {
   typeGuards: WhappTypeGuards;
   constructor(bot: Bot);
   get whapp(): this;
-  get misc(): Miscellaneous;
+  get misc(): import("ts-misc").default;
   start(session: string): Promise < boolean > ;
   onMessage(message: Venom.Message): Promise < any > ;
   onReply(message: ISent): Promise < [any, Error] > ;

@@ -8,27 +8,14 @@
 import Venom from 'venom-bot'
 import type VenomHostDevice from 'venom-bot/dist/api/model/host-device'
 
-// Import Miscellaneous
-import Miscellaneous from 'ts-misc'
-
-// Import FS
-import fs from 'fs'
-
 // Import Bot Type
 // eslint-disable-next-line import/no-duplicates
 import type Bot from './bot.js'
 // eslint-disable-next-line import/no-duplicates
 import type { TExec, TAExec } from './bot.js'
 
-/*
-##########################################################################################################################
-#                                                    MISCELLANEOUS CLASS                                                 #
-##########################################################################################################################
-*/
-
-// New Miscellaneous Object
-const misc = new Miscellaneous()
-const is = misc.guards.is
+// Import FS
+import fs from 'fs'
 
 /*
 ##########################################################################################################################
@@ -56,8 +43,17 @@ export interface ISentTextObj {
 
 // Type Guards
 export class WhappTypeGuards {
+  bot: Bot
+
+  constructor (bot: Bot) {
+    Object.defineProperty(this, 'bot',
+      { get() { return bot } }
+    )
+  }
+
   // Check if Is Sent Text Object
   isSentTextObj(obj: unknown): obj is ISentTextObj {
+    const is = this.bot.misc.guards.is
     if (!is.object(obj)) return false
     else if (!is.in(obj, 'to')) return false
     else if (!is.object(obj.to)) return false
@@ -78,8 +74,7 @@ export default class Whapp {
   client: Venom.Whatsapp
   me: VenomHostDevice.Me
   replyables: Record<string, TAExec>
-
-  typeGuards = new WhappTypeGuards()
+  typeGuards: WhappTypeGuards
 
   constructor (bot: Bot) {
     Object.defineProperty(this, 'bot',
@@ -87,6 +82,7 @@ export default class Whapp {
     )
     // Set Replyables List
     this.replyables = {}
+    this.typeGuards = new WhappTypeGuards(this.bot)
   }
 
   // Cycle Reference
@@ -108,7 +104,6 @@ export default class Whapp {
       if (clientError) throw clientError
       // Assign Client Object to Bot
       this.client = client
-      this.bot.started = true
     // If Error Occurred
     } catch (error) {
       // Log Error
@@ -116,8 +111,6 @@ export default class Whapp {
     }
     // Check for Client
     if (!this.client) return false
-    // check if bot started
-    if (!this.bot.started) return false
     // get host data
     const hostDevice = await this.client.getHostDevice()
     this.me = hostDevice.wid
@@ -135,6 +128,7 @@ export default class Whapp {
 
   // Get Message Method
   async onMessage(message: Venom.Message): Promise<any> {
+    const is = this.bot.misc.guards.is
     if (!this.bot.started) return
     else if (!is.object(message)) return
     else if (!is.in(message, 'body')) return
@@ -150,6 +144,7 @@ export default class Whapp {
 
   // Get Reply Method
   async onReply(message: ISent) {
+    const is = this.bot.misc.guards.is
     if (!message.quotedMsg) return
     const replyable = message.quotedMsg.id
     if (is.in(this.whapp.replyables, replyable)) {
@@ -159,6 +154,7 @@ export default class Whapp {
 
   // Add On-Reply Action
   addReplyable(sentId: string, exec: TExec): boolean {
+    const is = this.bot.misc.guards.is
     if (!is.function(exec)) return false
     this.replyables[sentId] = this.misc.handle.safe(exec)
     return true
@@ -172,6 +168,7 @@ export default class Whapp {
 
   // fetch data for message
   async fetch(data: TFetchString): Promise<string> {
+    const is = this.bot.misc.guards.is
     // Set Resolution Variable
     let resolution: string = null
     // check type-of input
@@ -231,6 +228,7 @@ export default class Whapp {
 
   // Get Message By Id
   async getMessageById(id: string): Promise<ISent> {
+    const is = this.bot.misc.guards.is
     const getMessage = () => this.client.getMessageById(id)
     const checkMessage = (obj: unknown) => is.object(obj) && !obj.erro
     const trial = this.misc.handle.repeat(getMessage.bind(this) as typeof getMessage, checkMessage.bind(this))
@@ -249,6 +247,7 @@ export default class Whapp {
 
   // Message Constructor
   setMessage(sent: Venom.Message): ISent {
+    const is = this.bot.misc.guards.is
     // Prevent Empty Message Objects
     if (!sent || !is.object(sent)) return
     // Fix Author on Private Messages
@@ -329,6 +328,7 @@ export default class Whapp {
     log?: TFetchString,
     quoteId?: TFetchString
   ): Promise<ISent> {
+    const is = this.bot.misc.guards.is
     // check if bot has started
     if (!this.bot.started) throw new Error('bot not started')
     // fetch text data

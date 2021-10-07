@@ -385,8 +385,8 @@ export default class Bot {
   // Start App
   async start(session) {
     // Start Whapp Services
-    const started = await this.whapp.start(session);
-    if (!started)
+    this.bot.started = await this.whapp.start(session);
+    if (!this.bot.started)
       return false;
     // Log Start of Bot
     await this.bot.log('Avbot::Started');
