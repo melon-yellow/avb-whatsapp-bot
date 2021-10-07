@@ -5,8 +5,8 @@
 */
 
 // Import Miscellaneous
-import Miscellaneous from '../../misc/src/index.js'
-import type * as T from '../../misc/src/types.js'
+import Miscellaneous from 'ts-misc'
+import type * as T from 'ts-misc/dist/utils/types'
 
 // Import Venom
 import Venom from 'venom-bot'

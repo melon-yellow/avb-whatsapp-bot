@@ -3,11 +3,12 @@
   "version": "1.9.3",
   "description": "Whatsapp Bot API / Powered by Venom-Bot",
   "type": "module",
+  "main": "dist/index.js",
   "scripts": {
     "transpile": "tsc -p tsconfig.json",
-    "beautify": "js-beautify -r --editorconfig ./build/*",
+    "beautify": "js-beautify -r --editorconfig ./dist/**/*.{js,ts,tsx}",
     "build": "yarn transpile && yarn beautify",
-    "start": "node ./build/avbot/src/bot.js",
+    "start": "node ./dist/index.js",
     "load": "yarn build && yarn start",
     "nonstop": "for /l %n in () do (yarn start)"
   },
@@ -19,9 +20,11 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
+    "miscellaneous": "anthony-freitas/ts-misc",
     "node-cron": "^2.0.3",
     "puppeteer": "^8.0.0",
     "request-ip": "^2.1.3",
+    "ts-misc": "anthony-freitas/ts-misc",
     "typescript": "^4.1.5",
     "venom-bot": "~3.1.0"
   },
