@@ -1,4 +1,4 @@
-import type Bot from './core.js';
+import type Bot from '../core/bot.js';
 export default class Laminador {
   bot: Bot;
   constructor(bot: Bot);

@@ -15,7 +15,7 @@
 */
 
 // Imports
-import Bot from './utils/core.js'
+import Bot from './core/bot.js'
 import Laminador from './utils/laminador.js'
 import PyAPI from './utils/pyapi.js'
 import cron from 'node-cron'
