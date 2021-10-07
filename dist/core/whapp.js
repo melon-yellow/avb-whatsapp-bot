@@ -276,10 +276,12 @@ export default class Whapp {
   */
   // Send Text Method
   async sendText(phoneNumber, text) {
-    const sentObj = await this.client.sendText(phoneNumber, text);
-    if (!this.typeGuards.isSentTextObj(sentObj))
+    // send message
+    const sent = await this.client.sendText(phoneNumber, text);
+    if (!this.typeGuards.isSentTextObj(sent))
       throw new Error('message not sent');
-    return this.getMessageById(sentObj.to._serialized);
+    // get message by id
+    return this.getMessageById(sent.to._serialized);
   }
   // Send Reply Method
   async sendReply(phoneNumber, text, quoteId) {
@@ -287,10 +289,12 @@ export default class Whapp {
     const replyTarget = await this.getMessageById(quoteId);
     if (!replyTarget)
       quoteId = '';
-    // then send reply
+    // send reply
     const reply = await this.client.reply(phoneNumber, text, quoteId);
+    if (!this.typeGuards.isSentTextObj(reply))
+      throw new Error('message not sent');
     // get message by id
-    return await this.getMessageById(reply.id);
+    return this.getMessageById(reply.to._serialized);
   }
   // Send Message Method
   async send(to, text, log, quoteId) {
