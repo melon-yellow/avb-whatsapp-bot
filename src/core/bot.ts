@@ -6,7 +6,7 @@
 
 // Import Miscellaneous
 import Miscellaneous from 'ts-misc'
-import type * as T from 'ts-misc/dist/utils/types'
+import type * as M from 'ts-misc/dist/utils/types'
 
 // Import Whapp
 import Whapp from './whapp.js'
@@ -234,7 +234,7 @@ export class Chat {
     } as const
     for (const i in g) {
       if (h < Number(i)) {
-        return g[i] as T.ValueOf<typeof g>
+        return g[i] as M.ValueOf<typeof g>
       }
     }
   }
