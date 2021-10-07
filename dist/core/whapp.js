@@ -18,7 +18,9 @@ export class WhappTypeGuards {
   }
   // Check if Is Sent Text Object
   isSentTextObj(obj) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is;
+    // Check Object Properties
     if (!is.object(obj))
       return false;
     else if (!is.in(obj, 'to'))
@@ -94,7 +96,9 @@ export default class Whapp {
   */
   // Get Message Method
   async onMessage(message) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is;
+    // Prevent execution if bot not started
     if (!this.bot.started)
       return;
     else if (!is.object(message))
@@ -115,7 +119,9 @@ export default class Whapp {
   }
   // Get Reply Method
   async onReply(message) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is;
+    // Check for Quoted-Message Object
     if (!message.quotedMsg)
       return;
     const replyable = message.quotedMsg.id;
@@ -125,7 +131,9 @@ export default class Whapp {
   }
   // Add On-Reply Action
   addReplyable(sentId, exec) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is;
+    // Check if Executable is Function
     if (!is.function(exec))
       return false;
     this.replyables[sentId] = this.misc.handle.safe(exec);
@@ -138,6 +146,7 @@ export default class Whapp {
   */
   // fetch data for message
   async fetch(data) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is;
     // Set Resolution Variable
     let resolution = null;
@@ -199,7 +208,9 @@ export default class Whapp {
   }
   // Get Message By Id
   async getMessageById(id) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is;
+    // Set Get-Message Function
     const getMessage = () => this.client.getMessageById(id);
     const checkMessage = (obj) => is.object(obj) && !obj.erro;
     const trial = this.misc.handle.repeat(getMessage.bind(this), checkMessage.bind(this));
@@ -216,6 +227,7 @@ export default class Whapp {
   */
   // Message Constructor
   setMessage(sent) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is;
     // Prevent Empty Message Objects
     if (!sent || !is.object(sent))
@@ -298,6 +310,7 @@ export default class Whapp {
   }
   // Send Message Method
   async send(to, text, log, quoteId) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is;
     // check if bot has started
     if (!this.bot.started)

@@ -53,7 +53,9 @@ export class WhappTypeGuards {
 
   // Check if Is Sent Text Object
   isSentTextObj(obj: unknown): obj is ISentTextObj {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is
+    // Check Object Properties
     if (!is.object(obj)) return false
     else if (!is.in(obj, 'to')) return false
     else if (!is.object(obj.to)) return false
@@ -128,7 +130,9 @@ export default class Whapp {
 
   // Get Message Method
   async onMessage(message: Venom.Message): Promise<any> {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is
+    // Prevent execution if bot not started
     if (!this.bot.started) return
     else if (!is.object(message)) return
     else if (!is.in(message, 'body')) return
@@ -144,7 +148,9 @@ export default class Whapp {
 
   // Get Reply Method
   async onReply(message: ISent) {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is
+    // Check for Quoted-Message Object
     if (!message.quotedMsg) return
     const replyable = message.quotedMsg.id
     if (is.in(this.whapp.replyables, replyable)) {
@@ -154,7 +160,9 @@ export default class Whapp {
 
   // Add On-Reply Action
   addReplyable(sentId: string, exec: TExec): boolean {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is
+    // Check if Executable is Function
     if (!is.function(exec)) return false
     this.replyables[sentId] = this.misc.handle.safe(exec)
     return true
@@ -168,6 +176,7 @@ export default class Whapp {
 
   // fetch data for message
   async fetch(data: TFetchString): Promise<string> {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is
     // Set Resolution Variable
     let resolution: string = null
@@ -228,7 +237,9 @@ export default class Whapp {
 
   // Get Message By Id
   async getMessageById(id: string): Promise<ISent> {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is
+    // Set Get-Message Function
     const getMessage = () => this.client.getMessageById(id)
     const checkMessage = (obj: unknown) => is.object(obj) && !obj.erro
     const trial = this.misc.handle.repeat(getMessage.bind(this) as typeof getMessage, checkMessage.bind(this))
@@ -247,6 +258,7 @@ export default class Whapp {
 
   // Message Constructor
   setMessage(sent: Venom.Message): ISent {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is
     // Prevent Empty Message Objects
     if (!sent || !is.object(sent)) return
@@ -331,6 +343,7 @@ export default class Whapp {
     log?: TFetchString,
     quoteId?: TFetchString
   ): Promise<ISent> {
+    // Global Type-Guard
     const is = this.bot.misc.guards.is
     // check if bot has started
     if (!this.bot.started) throw new Error('bot not started')
