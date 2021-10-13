@@ -254,14 +254,16 @@ export class Chat {
       'como desejar! 👍', 'deixa comigo! 👍', 'pode deixar! 👍'
     ] as const)
     // Assembly
-    return hi + (hi === '' ? '' : ' ') + this.timeGreet + ', ' + git
+    return misc.string.join([
+      hi, (hi === '' ? '' : ' '), this.timeGreet, ', ', git
+    ] as const, '')
   }
 
-  get gotMention(): string {
+  get gotMention() {
     const ack = this.misc.sets.rand(['🙋‍♂️', '😁'] as const)
     const me = this.misc.sets.rand(['Eu', 'Aqui'] as const)
     // Assembly
-    return ack + ' ' + me
+    return misc.string.join([ack, ' ', me] as const, '')
   }
 
   get askPython() {
@@ -281,7 +283,9 @@ export class Chat {
           'vou procurar aqui o que você pediu 🤔'
         ] as const)
         // Assembly
-        return hi + (hi === '' ? '' : ' ') + chat.timeGreet + wait + ', ' + lure
+        return misc.string.join([
+          hi, (hi === '' ? '' : ' '), chat.timeGreet, wait, ', ', lure
+        ] as const, '')
       },
       get finally() {
         return misc.sets.rand([
@@ -296,7 +300,7 @@ export class Chat {
   get error() {
     const misc = this.misc
     return {
-      get network (): string {
+      get network () {
         const msg = misc.sets.rand(['Ocorreu um erro enquanto eu buscava os dados!',
           'Oops, algo deu Errado!', 'Não pude acessar os dados!'
         ] as const)
@@ -305,7 +309,7 @@ export class Chat {
           '🤔 deve ter caido alguma conexão minha'
         ] as const)
         // Assembly
-        return msg + ' ' + flt
+        return misc.string.join([msg, ' ', flt] as const, '')
       }
     }
   }

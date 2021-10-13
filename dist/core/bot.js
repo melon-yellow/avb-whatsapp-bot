@@ -224,13 +224,15 @@ export class Chat {
       'como desejar! 👍', 'deixa comigo! 👍', 'pode deixar! 👍'
     ]);
     // Assembly
-    return hi + (hi === '' ? '' : ' ') + this.timeGreet + ', ' + git;
+    return misc.string.join([
+      hi, (hi === '' ? '' : ' '), this.timeGreet, ', ', git
+    ], '');
   }
   get gotMention() {
     const ack = this.misc.sets.rand(['🙋‍♂️', '😁']);
     const me = this.misc.sets.rand(['Eu', 'Aqui']);
     // Assembly
-    return ack + ' ' + me;
+    return misc.string.join([ack, ' ', me], '');
   }
   get askPython() {
     const chat = this;
@@ -249,7 +251,9 @@ export class Chat {
           'vou procurar aqui o que você pediu 🤔'
         ]);
         // Assembly
-        return hi + (hi === '' ? '' : ' ') + chat.timeGreet + wait + ', ' + lure;
+        return misc.string.join([
+          hi, (hi === '' ? '' : ' '), chat.timeGreet, wait, ', ', lure
+        ], '');
       },
       get finally() {
         return misc.sets.rand([
@@ -272,7 +276,7 @@ export class Chat {
           '🤔 deve ter caido alguma conexão minha'
         ]);
         // Assembly
-        return msg + ' ' + flt;
+        return misc.string.join([msg, ' ', flt], '');
       }
     };
   }
