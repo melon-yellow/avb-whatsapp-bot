@@ -1,4 +1,4 @@
-import type Bot from '../core/bot.js';
+import type Bot from 'ts-wapp';
 export default class Laminador {
   bot: Bot;
   constructor(bot: Bot);
