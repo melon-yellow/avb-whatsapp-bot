@@ -27,13 +27,18 @@ import cron from 'node-cron'
 */
 
 // Create Instance of Bot
-const Avbot = new Bot()
+const Avbot = new Bot('avbot')
 
 // Create Instance of Laminador
 const Lam = new Laminador(Avbot)
 
 // Create Instance of Python API
 const pyApi = new PyAPI(Avbot)
+
+// Set Bot Contacts File
+Avbot.wapp.setContactsList(
+  Avbot.misc.sets.proxyJSON('./private/contacts.bot.json') as Record<string, string>
+)
 
 /*
 ##########################################################################################################################
@@ -110,7 +115,7 @@ cron.schedule('7 */1 * * *', async () => {
 */
 
 // Create Instance of Venom
-await Avbot.start('avbot')
+await Avbot.start()
 
 // Start Python API
 await pyApi.start()
