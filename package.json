@@ -1,7 +1,7 @@
 {
   "name": "ts-avbot",
-  "version": "2.1.0",
-  "description": "Whatsapp Bot API (venom-bot wrapper)",
+  "version": "2.1.2",
+  "description": "AVB Whatsapp Bot",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

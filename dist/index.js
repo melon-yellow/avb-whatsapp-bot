@@ -1,13 +1,13 @@
 /*
 ##########################################################################################################################
-#                                                         AVBOT                                                          #
+#                                                        TS-AVBOT                                                        #
 ##########################################################################################################################
 #                                                                                                                        #
-#                                                     Avbot v1.9.3                                                       #
+#                                                   AVB Whatsapp Bot                                                     #
 #                                          Multi-language API for Whatsapp Bot                                           #
-#                             ---------------- Python3 -- NodeJS -- MySQL ----------------                               #
-#                                             This is a Development Server                                               #
-#                                                 Powered by venom-bot                                                   #
+#                                 ---------------- Python3 -- NodeJS ----------------                                    #
+#                                                * Under Development *                                                   #
+#                                     https://github.com/anthony-freitas/ts-avbot                                        #
 #                                                                                                                        #
 ##########################################################################################################################
 #                                                        MAIN CODE                                                       #
@@ -24,11 +24,13 @@ import cron from 'node-cron';
 ##########################################################################################################################
 */
 // Create Instance of Bot
-const Avbot = new Bot();
+const Avbot = new Bot('avbot');
 // Create Instance of Laminador
 const Lam = new Laminador(Avbot);
 // Create Instance of Python API
 const pyApi = new PyAPI(Avbot);
+// Set Bot Contacts File
+Avbot.wapp.setContactsList(Avbot.misc.sets.proxyJSON('./private/contacts.bot.json'));
 /*
 ##########################################################################################################################
 #                                                        BOT METHODS                                                     #
@@ -86,7 +88,7 @@ cron.schedule('7 */1 * * *', async () => {
 ##########################################################################################################################
 */
 // Create Instance of Venom
-await Avbot.start('avbot');
+await Avbot.start();
 // Start Python API
 await pyApi.start();
 /*
