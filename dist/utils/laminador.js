@@ -4,6 +4,7 @@
 ##########################################################################################################################
 */
 export default class Laminador {
+  bot;
   constructor(bot) {
     Object.defineProperty(this, 'bot', {
       get() {

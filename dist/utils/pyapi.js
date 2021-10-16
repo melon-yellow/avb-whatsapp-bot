@@ -5,6 +5,9 @@
 */
 // Python API Class
 export default class PyAPI {
+  bot;
+  conn;
+  pyaddr;
   constructor(bot) {
     Object.defineProperty(this, 'bot', {
       get() {
