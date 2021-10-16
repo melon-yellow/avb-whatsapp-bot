@@ -120,6 +120,9 @@ await Avbot.start()
 // Start Python API
 await pyApi.start()
 
+// Send Message to Admin
+await Avbot.sends('anthony', 'Node Avbot Started!', 'bot_start')
+
 /*
 ##########################################################################################################################
 #                                                          END                                                           #
