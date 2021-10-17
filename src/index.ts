@@ -19,6 +19,7 @@ import Bot from 'ts-wapp'
 import Laminador from './utils/laminador.js'
 import PyAPI from './utils/pyapi.js'
 import cron from 'node-cron'
+import fs from 'fs'
 
 /*
 ##########################################################################################################################
@@ -37,7 +38,9 @@ const pyApi = new PyAPI(Avbot)
 
 // Set Bot Contacts File
 Avbot.wapp.setContactsList(
-  Avbot.misc.sets.proxyJSON('./private/contacts.bot.json') as Record<string, string>
+  JSON.parse(
+    fs.readFileSync('./private/contacts.bot.json').toString()
+  ) as Record<string, string>
 )
 
 /*
@@ -115,7 +118,7 @@ cron.schedule('7 */1 * * *', async () => {
 */
 
 // Create Instance of Venom
-await Avbot.start()
+await Avbot.start(1615)
 
 // Start Python API
 await pyApi.start()
