@@ -43,8 +43,10 @@ Avbot.wapp.setContactsList(
   ) as Record<string, string>
 )
 
-// Set API Listen Port
-Avbot.api.port(1615)
+// Set API Listen Port and Authentication
+Avbot.api.port(1615).user('avb.whatsapp').password(
+  'ert2tyt3tQ3423rubu99ibasid8hya8da76sd'
+)
 
 /*
 ##########################################################################################################################
