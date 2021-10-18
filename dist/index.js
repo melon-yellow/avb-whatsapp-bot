@@ -32,6 +32,8 @@ const Lam = new Laminador(Avbot);
 const pyApi = new PyAPI(Avbot);
 // Set Bot Contacts File
 Avbot.wapp.setContactsList(JSON.parse(fs.readFileSync('./private/contacts.bot.json').toString()));
+// Set API Listen Port and Authentication
+Avbot.api.port(1615).user('avb.whatsapp').password('ert2tyt3tQ3423rubu99ibasid8hya8da76sd');
 /*
 ##########################################################################################################################
 #                                                        BOT METHODS                                                     #
@@ -89,7 +91,7 @@ cron.schedule('7 */1 * * *', async () => {
 ##########################################################################################################################
 */
 // Create Instance of Venom
-await Avbot.start(1615);
+await Avbot.start();
 // Start Python API
 await pyApi.start();
 // Send Message to Admin

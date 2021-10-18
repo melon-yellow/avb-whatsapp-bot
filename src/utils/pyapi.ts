@@ -1,5 +1,6 @@
 // Imports
 import type Bot from 'ts-wapp'
+import type { ITarget } from 'ts-wapp/dist/utils/types.js'
 
 /*
 ##########################################################################################################################
@@ -11,7 +12,7 @@ import type Bot from 'ts-wapp'
 export default class PyAPI {
   bot: Bot
   conn: boolean
-  pyaddr: string
+  target: ITarget
 
   constructor (bot: Bot) {
     Object.defineProperty(this, 'bot',
@@ -19,7 +20,13 @@ export default class PyAPI {
     )
 
     // Set Python API Address
-    this.pyaddr = 'http://localhost:1516/ibot'
+    this.target = {
+      addr: 'http://localhost:1516/i',
+      auth: {
+        user: this.api.config.auth.user,
+        password: this.api.config.auth.passwd
+      }
+    }
 
     // Set Connection Status Object
     this.conn = undefined
@@ -32,7 +39,7 @@ export default class PyAPI {
   // Check Connection
   async link(): Promise<boolean> {
     // test connection
-    const [, requestError] = await this.api.reqs(this.pyaddr, null)
+    const [, requestError] = await this.api.reqs(this.target, null)
     const conn = !requestError
     // check result
     if (this.conn !== conn) {
