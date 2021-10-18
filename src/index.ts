@@ -43,6 +43,9 @@ Avbot.wapp.setContactsList(
   ) as Record<string, string>
 )
 
+// Set API Listen Port
+Avbot.api.port(1615)
+
 /*
 ##########################################################################################################################
 #                                                        BOT METHODS                                                     #
@@ -118,7 +121,7 @@ cron.schedule('7 */1 * * *', async () => {
 */
 
 // Create Instance of Venom
-await Avbot.start(1615)
+await Avbot.start()
 
 // Start Python API
 await pyApi.start()
