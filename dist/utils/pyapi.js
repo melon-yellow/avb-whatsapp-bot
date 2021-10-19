@@ -18,8 +18,8 @@ export default class PyAPI {
     this.target = {
       addr: 'http://localhost:1516/i',
       auth: {
-        user: this.api.config.auth.user,
-        password: this.api.config.auth.passwd
+        user: 'gusal2.avb.whatsapp',
+        password: 'ert2tyt3tQ3423rubu99ibasid8hya8da76sd'
       }
     };
     // Set Connection Status Object
