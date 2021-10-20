@@ -47,7 +47,7 @@ Avbot.wapp.setContactsList(
 Avbot.api.port(1615)
   .addUser({
     user: 'gusal2.avb.whatsapp',
-    password: 'ert2tyt3tQ3423rubu99ibasid8hya8da76sd'
+    password: 'n2u95n345bu345u34sdsnujdisj3w3wq3ng32'
   }).addUser({
     user: 'iba.avb.whatsapp',
     password: 'ert2tyt3tQ3423rubu99ibasid8hya8da76sd'
