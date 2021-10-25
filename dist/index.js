@@ -88,7 +88,7 @@ Avbot.add('else', async (message) => {
 // Cron Scheduled Messages
 cron.schedule('7 */1 * * *', async () => {
   // Producao Trefila Grupo
-  await Avbot.sends('grupo_trefila', Lam.getTref(), 'cron::prod_trf');
+  // await Avbot.sends('grupo_trefila', Lam.getTref(), 'cron::prod_trf')
   // Producao Laminador Calegari
   await Avbot.sends('calegari', Lam.getProd(), 'cron::prod_lam_calegari');
 });
