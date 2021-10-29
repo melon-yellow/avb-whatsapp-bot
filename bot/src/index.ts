@@ -39,7 +39,7 @@ const pyApi = new PyAPI(Avbot)
 // Set Bot Contacts File
 Avbot.wapp.setContactsList(
   JSON.parse(
-    fs.readFileSync('./private/contacts.bot.json').toString()
+    fs.readFileSync('../contacts.bot.json').toString()
   ) as Record<string, string>
 )
 
