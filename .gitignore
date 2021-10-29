@@ -6,5 +6,8 @@
 # dependencies
 /whatsapp/node_modules
 
+# db
+/db/data/*
+
 # env
 .env

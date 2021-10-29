@@ -1,21 +1,28 @@
-version: "3.7"
+
+version: "3"
+
 services:
+
   db:
     image: mysql
-    container_name: avb-whatsapp-bot-mysql
+    container_name: db
     command: --default-authentication-plugin=mysql_native_password
-    envirionment:
+    environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pass}
       MYSQL_USER: ${MYSQL_USER:-user}
     volumes:
       - ./db/data:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT}:3306"
     restart: always
+
   whatsapp:
     image: node:16
-    build: .
-    command: yarn nonstop
-    envirionment:
+    container_name: whatsapp
+    build: ./whatsapp
+    command: ls
+    environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pass}
       MYSQL_USER: ${MYSQL_USER:-user}
@@ -26,7 +33,5 @@ services:
       WHATSAPP_USER_2_PW: ${WHATSAPP_USER_2_PW:-u2p}
     ports:
       - "${WHATSAPP_PORT}:${WHATSAPP_PORT}"
-    volumes:
-      - ./whatsapp:/usr/app
     depends_on:
       - db
