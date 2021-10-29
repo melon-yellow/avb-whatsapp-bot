@@ -5,7 +5,6 @@
 
 # dependencies
 /whatsapp/node_modules
-/whatsapp/yarn.lock
 
 # env
 .env

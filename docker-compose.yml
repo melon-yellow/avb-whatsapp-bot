@@ -18,12 +18,15 @@ services:
     image: node:16
     container_name: whatsapp
     build: ./whatsapp
-    command: bash -c "yarn && yarn build && yarn nonstop"
+    command: bash -c "yarn && yarn build && yarn start"
     env_file: .env
     volumes:
-      - /usr/app/
-      - ./whatsapp/src:/usr/app/src/
-      - ./whatsapp/config:/usr/app/config/
+      # Folders
+      - ./whatsapp/src/:/usr/app/src/
+      - ./whatsapp/config/:/usr/app/config/
+      - ./whatsapp/node_modules/:/usr/app/node_modules/
+      # Files
+      - ./whatsapp/yarn.lock:/usr/app/yarn.lock
       - ./whatsapp/package.json:/usr/app/package.json
       - ./whatsapp/tsconfig.json:/usr/app/tsconfig.json
     ports:
