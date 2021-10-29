@@ -7,9 +7,9 @@ services:
     image: mysql:8
     container_name: db
     command: --default-authentication-plugin=mysql_native_password
-    env_file: db.env
+    env_file: .env
     volumes:
-      - ./db/data:/var/lib/mysql
+      - /var/lib/mysql
     ports:
       - "${MYSQL_PORT}:3306"
     restart: always
@@ -18,12 +18,16 @@ services:
     image: node:16
     container_name: whatsapp
     build: ./whatsapp
-    command: bash -c "yarn load"
-    env_file:
-      - db.env
-      - .env
+    command: bash -c "yarn && yarn build && yarn nonstop"
+    env_file: .env
     volumes:
-      - ./whatsapp:/usr/app/
+      - /usr/app/yarn.lock
+      - /usr/app/node_modules/
+      - ./whatsapp/src:/usr/app/src/
+      - ./whatsapp/config:/usr/app/config/
+      - ./whatsapp/package.json:/usr/app/package.json
+      - ./whatsapp/tsconfig.json:/usr/app/tsconfig.json
+      - ./whatsapp/.editorconfig:/usr/app/.editorconfig
     ports:
       - "${WHATSAPP_PORT}:${WHATSAPP_PORT}"
     depends_on:

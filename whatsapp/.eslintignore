@@ -1,4 +1,3 @@
 node_modules
-private
-tokens
+config
 dist

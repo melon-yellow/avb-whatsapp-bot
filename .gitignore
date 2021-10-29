@@ -5,10 +5,7 @@
 
 # dependencies
 /whatsapp/node_modules
-
-# db
-/db/data/*
+/whatsapp/yarn.lock
 
 # env
 .env
-db.env
