@@ -47,7 +47,7 @@ avbot.wapp.setContactsList(
 avbot.api.port(Number(process.env.WHATSAPP_PORT ?? 3000))
   .addUser({
     user: process.env.WHATSAPP_USER_1 ?? 'u1',
-    password: process.env.WHATSAPP_USER_1_PW ?? 'u1p' 
+    password: process.env.WHATSAPP_USER_1_PW ?? 'u1p'
   }).addUser({
     user: process.env.WHATSAPP_USER_2 ?? 'u2',
     password: process.env.WHATSAPP_USER_2_PW ?? 'u2p'
