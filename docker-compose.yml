@@ -21,8 +21,7 @@ services:
     command: bash -c "yarn && yarn build && yarn nonstop"
     env_file: .env
     volumes:
-      - /usr/app/yarn.lock
-      - /usr/app/node_modules/
+      - /usr/app/
       - ./whatsapp/src:/usr/app/src/
       - ./whatsapp/config:/usr/app/config/
       - ./whatsapp/package.json:/usr/app/package.json
