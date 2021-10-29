@@ -23,7 +23,7 @@ import fs from 'fs'
 
 /*
 ##########################################################################################################################
-#                                                         BOT INIT                                                       #
+#                                                     INSTANCE CLASSES                                                   #
 ##########################################################################################################################
 */
 
@@ -35,6 +35,12 @@ const lam = new Laminador(avbot)
 
 // Create Instance of Python API
 const pyApi = new PyAPI(avbot)
+
+/*
+##########################################################################################################################
+#                                                        SET OPTIONS                                                     #
+##########################################################################################################################
+*/
 
 // Set Venom Options
 avbot.wapp.setOptions({
@@ -50,15 +56,26 @@ avbot.wapp.setContactsList(
   ) as Record<string, string>
 )
 
+/*
+##########################################################################################################################
+#                                                         READ ENV                                                       #
+##########################################################################################################################
+*/
+
+// Read Enviromental Variables
+const whatsappPort = Number(process.env.WHATSAPP_PORT ?? 3000)
+const whatsappUsers = Number(process.env.WHATSAPP_USERS ?? 0)
+
 // Set API Listen Port and Authentication
-avbot.api.port(Number(process.env.WHATSAPP_PORT ?? 3000))
-  .addUser({
-    user: process.env.WHATSAPP_USER_1 ?? 'u1',
-    password: process.env.WHATSAPP_USER_1_PW ?? 'u1p'
-  }).addUser({
-    user: process.env.WHATSAPP_USER_2 ?? 'u2',
-    password: process.env.WHATSAPP_USER_2_PW ?? 'u2p'
+avbot.api.port(whatsappPort)
+
+// Set All Users
+Array(whatsappUsers).forEach((_v, i) => {
+  avbot.api.addUser({
+    user: process.env[`WHATSAPP_USER_${i + 1}`],
+    password: process.env[`WHATSAPP_USER_PW_${i + 1}`]
   })
+})
 
 /*
 ##########################################################################################################################
