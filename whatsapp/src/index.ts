@@ -46,7 +46,7 @@ avbot.wapp.setOptions({
 // Set Bot Contacts File
 avbot.wapp.setContactsList(
   JSON.parse(
-    fs.readFileSync('./private/contacts.bot.json').toString()
+    fs.readFileSync('./config/contacts.bot.json').toString()
   ) as Record<string, string>
 )
 
