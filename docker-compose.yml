@@ -7,11 +7,7 @@ services:
     image: mysql:8
     container_name: db
     command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_PORT: ${MYSQL_PORT:-3306}
-      MYSQL_USER: ${MYSQL_USER:-user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pass}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    env_file: db.env
     volumes:
       - ./db/data:/var/lib/mysql
     ports:
@@ -23,15 +19,9 @@ services:
     container_name: whatsapp
     build: ./whatsapp
     command: bash -c "yarn build && yarn start"
-    environment:
-      MYSQL_PORT: ${MYSQL_PORT:-3306}
-      MYSQL_USER: ${MYSQL_USER:-user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pass}
-      WHATSAPP_USERS: ${WHATSAPP_USERS:-0}
-      WHATSAPP_USER_1: ${WHATSAPP_USER_1:- }
-      WHATSAPP_USER_PW_1: ${WHATSAPP_USER_PW_1:- }
-      WHATSAPP_USER_2: ${WHATSAPP_USER_2:- }
-      WHATSAPP_USER_PW_2: ${WHATSAPP_USER_PW_2:- }
+    env_file:
+      - db.env
+      - .env
     ports:
       - "${WHATSAPP_PORT}:${WHATSAPP_PORT}"
     depends_on:
