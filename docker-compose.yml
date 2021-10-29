@@ -23,7 +23,6 @@ services:
     build: ./whatsapp
     command: bash -c "yarn build && yarn start"
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pass}
       MYSQL_USER: ${MYSQL_USER:-user}
       WHATSAPP_PORT: ${WHATSAPP_PORT:-3000}
