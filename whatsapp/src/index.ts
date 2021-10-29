@@ -28,29 +28,29 @@ import fs from 'fs'
 */
 
 // Create Instance of Bot
-const Avbot = new Bot('avbot')
+const avbot = new Bot('avbot')
 
 // Create Instance of Laminador
-const Lam = new Laminador(Avbot)
+const lam = new Laminador(avbot)
 
 // Create Instance of Python API
-const pyApi = new PyAPI(Avbot)
+const pyApi = new PyAPI(avbot)
 
 // Set Bot Contacts File
-Avbot.wapp.setContactsList(
+avbot.wapp.setContactsList(
   JSON.parse(
-    fs.readFileSync('./bot/contacts.bot.json').toString()
+    fs.readFileSync('./contacts.bot.json').toString()
   ) as Record<string, string>
 )
 
 // Set API Listen Port and Authentication
-Avbot.api.port(1615)
+avbot.api.port(Number(process.env.WHATSAPP_PORT ?? 3000))
   .addUser({
-    user: 'gusal2.avb.whatsapp',
-    password: 'n2u95n345bu345u34sdsnujdisj3w3wq3ng32'
+    user: process.env.WHATSAPP_USER_1 ?? 'u1',
+    password: process.env.WHATSAPP_USER_1_PW ?? 'u1p' 
   }).addUser({
-    user: 'iba.avb.whatsapp',
-    password: 'ert2tyt3tQ3423rubu99ibasid8hya8da76sd'
+    user: process.env.WHATSAPP_USER_2 ?? 'u2',
+    password: process.env.WHATSAPP_USER_2_PW ?? 'u2p'
   })
 
 /*
@@ -60,7 +60,7 @@ Avbot.api.port(1615)
 */
 
 // Responde Agradecimento
-Avbot.add('cool_feedback',
+avbot.add('cool_feedback',
   message => message.clean().match(/^\s*(obrigado|valeu)\s*$/),
   async message => {
     await message.quote('Estou as ordens! 😉🤝', 'cool_feedback')
@@ -68,47 +68,47 @@ Avbot.add('cool_feedback',
 )
 
 // Producao Trefila
-Avbot.add('prod_trf',
+avbot.add('prod_trf',
   message => message.clean().match(/^\s*(producao(\s+))?trefila\s*$/),
   async message => {
-    await message.quote(Avbot.chat.gotIt, 'got_it')
-    await message.send(Lam.getTref(), 'bot::prod_trf')
+    await message.quote(avbot.chat.gotIt, 'got_it')
+    await message.send(lam.getTref(), 'bot::prod_trf')
   }
 )
 
 // Producao Laminador
-Avbot.add('prod_lam',
+avbot.add('prod_lam',
   message => message.clean().match(/^\s*(producao(\s+))?laminador\s*$/),
   async message => {
-    await message.quote(Avbot.chat.gotIt, 'got_it')
-    await message.send(Lam.getProd(), 'bot::prod_lam')
+    await message.quote(avbot.chat.gotIt, 'got_it')
+    await message.send(lam.getProd(), 'bot::prod_lam')
   }
 )
 
 // Producao do Mes Laminador
-Avbot.add('prod_mes_lam',
+avbot.add('prod_mes_lam',
   message => message.clean().match(/^\s*producao(\s+)(do(\s+))?mes((\s+)laminador)?\s*$/),
   async message => {
-    await message.quote(Avbot.chat.gotIt, 'got_it')
-    await message.send(Lam.getProdMes(), 'bot::prod_mes_lam')
+    await message.quote(avbot.chat.gotIt, 'got_it')
+    await message.send(lam.getProdMes(), 'bot::prod_mes_lam')
   }
 )
 
 // Responde Pergunta Geral do Usuario
-Avbot.add('else', async message => {
-  await message.quote(Avbot.chat.askPython.asking, 'asking_py')
-  Lam.postData({ question: message.clean() })
+avbot.add('else', async message => {
+  await message.quote(avbot.chat.askPython.asking, 'asking_py')
+  lam.postData({ question: message.clean() })
     .catch(async error => {
-      await Avbot.bot.log(`Error(admin::exec) Throw(${error})`)
-      await message.send(Avbot.bot.chat.error.network, 'error_in_request')
+      await avbot.bot.log(`Error(admin::exec) Throw(${error})`)
+      await message.send(avbot.bot.chat.error.network, 'error_in_request')
     })
     .then(async answer => {
-      if (!Avbot.misc.guards.is.string(answer)) {
-        await Avbot.bot.log('Error(admin::exec) Throw(bad response)')
-        await message.send(Avbot.bot.chat.error.network, 'error_in_request')
+      if (!avbot.misc.guards.is.string(answer)) {
+        await avbot.bot.log('Error(admin::exec) Throw(bad response)')
+        await message.send(avbot.bot.chat.error.network, 'error_in_request')
         return
       }
-      await message.quote(Avbot.chat.askPython.finally, 'got_py_response')
+      await message.quote(avbot.chat.askPython.finally, 'got_py_response')
       await message.send(answer, 'py_response')
     })
 })
@@ -118,7 +118,7 @@ cron.schedule('7 */1 * * *', async () => {
   // Producao Trefila Grupo
   // await Avbot.sends('grupo_trefila', Lam.getTref(), 'cron::prod_trf')
   // Producao Laminador Calegari
-  await Avbot.sends('calegari', Lam.getProd(), 'cron::prod_lam_calegari')
+  await avbot.sends('calegari', lam.getProd(), 'cron::prod_lam_calegari')
 })
 
 /*
@@ -128,13 +128,13 @@ cron.schedule('7 */1 * * *', async () => {
 */
 
 // Create Instance of Venom
-await Avbot.start()
+await avbot.start()
 
 // Start Python API
 await pyApi.start()
 
 // Send Message to Admin
-await Avbot.sends('anthony', 'Node Avbot Started!', 'bot_start')
+await avbot.sends('anthony', 'Node Avbot Started!', 'bot_start')
 
 /*
 ##########################################################################################################################

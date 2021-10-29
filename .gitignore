@@ -1,7 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dist
-/bot/dist
+/whatsapp/dist
 
 # dependencies
-/node_modules
+/whatsapp/node_modules
+
+# env
+.env

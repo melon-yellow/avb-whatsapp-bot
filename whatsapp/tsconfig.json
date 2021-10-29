@@ -14,7 +14,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
-    "outDir":"./bot/dist",
+    "outDir":"./dist",
     "baseUrl": "./",
     "paths": {}
   },
@@ -24,6 +24,6 @@
   ],
   "exclude": [
     "node_modules",
-    "bot/dist"
+    "dist"
   ]
 }
