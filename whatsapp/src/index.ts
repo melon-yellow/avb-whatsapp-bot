@@ -36,10 +36,17 @@ const lam = new Laminador(avbot)
 // Create Instance of Python API
 const pyApi = new PyAPI(avbot)
 
+// Set Venom Options
+avbot.wapp.setOptions({
+  browserArgs: JSON.parse(
+    fs.readFileSync('./config/browser.args.json').toString()
+  ).args as string[]
+})
+
 // Set Bot Contacts File
 avbot.wapp.setContactsList(
   JSON.parse(
-    fs.readFileSync('./contacts.bot.json').toString()
+    fs.readFileSync('./private/contacts.bot.json').toString()
   ) as Record<string, string>
 )
 
