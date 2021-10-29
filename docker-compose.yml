@@ -11,18 +11,21 @@ services:
     volumes:
       - ./db/data:/var/lib/mysql
     ports:
-      - "${MYSQL_PORT:-3306}:3306"
+      - "${MYSQL_PORT}:3306"
     restart: always
 
   whatsapp:
     image: node:16
     container_name: whatsapp
     build: ./whatsapp
-    command: bash -c "yarn build && yarn start"
+    command: bash -c "yarn load"
     env_file:
       - db.env
       - .env
+    volumes:
+      - ./whatsapp:/usr/app/
     ports:
       - "${WHATSAPP_PORT}:${WHATSAPP_PORT}"
     depends_on:
       - db
+    restart: always
