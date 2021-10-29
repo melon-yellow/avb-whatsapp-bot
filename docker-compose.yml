@@ -21,7 +21,7 @@ services:
     image: node:16
     container_name: whatsapp
     build: ./whatsapp
-    command: bash -c "yarn build && yarn nonstop"
+    command: bash -c "yarn build && yarn start"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pass}
