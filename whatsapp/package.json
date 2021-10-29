@@ -24,7 +24,6 @@
     "node-cron": "^2.0.3",
     "prettier": "^2.2.1",
     "request-ip": "^2.1.3",
-    "rm-r": "^1.0.2",
     "ts-wapp": "anthony-freitas/ts-wapp",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.1.5"
