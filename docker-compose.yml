@@ -26,7 +26,6 @@ services:
       - ./whatsapp/config:/usr/app/config/
       - ./whatsapp/package.json:/usr/app/package.json
       - ./whatsapp/tsconfig.json:/usr/app/tsconfig.json
-      - ./whatsapp/.editorconfig:/usr/app/.editorconfig
     ports:
       - "${WHATSAPP_PORT}:${WHATSAPP_PORT}"
     depends_on:
