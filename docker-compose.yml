@@ -12,7 +12,7 @@ services:
     volumes:
       - ./db/data/:/var/lib/mysql
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
     restart: always
 
   whatsapp:
