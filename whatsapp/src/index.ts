@@ -62,18 +62,18 @@ avbot.wapp.setContactsList(
 ##########################################################################################################################
 */
 
-// Read Enviromental Variables
-const whatsappPort = Number(process.env.WHATSAPP_PORT ?? 3000)
-const whatsappUsers = Number(process.env.WHATSAPP_USERS ?? 0)
-
 // Set API Listen Port and Authentication
-avbot.api.port(whatsappPort)
+avbot.api.port(
+  Number(process.env.WHATSAPP_PORT ?? 3000)
+)
 
 // Set All Users
-Array(whatsappUsers).forEach((_v, i) => {
+Array(
+  Number(process.env.WHATSAPP_USERS ?? 0)
+).forEach((_v, i) => {
   avbot.api.addUser({
     user: process.env[`WHATSAPP_USER_${i + 1}`],
-    password: process.env[`WHATSAPP_USER_PW_${i + 1}`]
+    password: process.env[`WHATSAPP_PASSWORD_${i + 1}`]
   })
 })
 
