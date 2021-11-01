@@ -45,11 +45,11 @@ export default class PyAPI {
     if (this.conn !== conn) {
       const l1 = 'Connection with Python Established'
       const l2 = 'No Connection with Python'
-      const log = conn ? l1 : l2
-      await this.bot.log(log)
+      const msg = conn ? l1 : l2
+      await this.bot.log(msg)
       this.conn = conn
       // Send Message to Admin
-      await this.bot.sends('anthony', log, 'py_conn_status')
+      await this.bot.sends({ to: 'anthony', text: msg, log: 'py_conn_status' })
     }
     // return result
     return conn
