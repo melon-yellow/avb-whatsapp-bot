@@ -16,8 +16,9 @@
 
 // Imports
 import Bot from 'ts-wapp'
-import Laminador from './utils/laminador.js'
-import PyAPI from './utils/pyapi.js'
+import * as actions from './modules/actions.js'
+import Laminador from './modules/laminador.js'
+import PyAPI from './modules/pyapi.js'
 import cron from 'node-cron'
 import fs from 'fs'
 
@@ -83,59 +84,8 @@ Array(
 ##########################################################################################################################
 */
 
-// Responde Agradecimento
-avbot.add('cool_feedback',
-  message => message.clean().match(/^\s*(obrigado|valeu)\s*$/),
-  async message => {
-    await message.quote({ text: 'Estou as ordens! 😉🤝', log: 'cool_feedback' })
-  }
-)
-
-// Producao Trefila
-avbot.add('prod_trf',
-  message => message.clean().match(/^\s*(producao(\s+))?trefila\s*$/),
-  async message => {
-    await message.quote({ text: avbot.chat.gotIt, log: 'got_it' })
-    await message.send({ text: lam.getTref(), log: 'bot::prod_trf' })
-  }
-)
-
-// Producao Laminador
-avbot.add('prod_lam',
-  message => message.clean().match(/^\s*(producao(\s+))?laminador\s*$/),
-  async message => {
-    await message.quote({ text: avbot.chat.gotIt, log: 'got_it' })
-    await message.send({ text: lam.getProd(), log: 'bot::prod_lam' })
-  }
-)
-
-// Producao do Mes Laminador
-avbot.add('prod_mes_lam',
-  message => message.clean().match(/^\s*producao(\s+)(do(\s+))?mes((\s+)laminador)?\s*$/),
-  async message => {
-    await message.quote({ text: avbot.chat.gotIt, log: 'got_it' })
-    await message.send({ text: lam.getProdMes(), log: 'bot::prod_mes_lam' })
-  }
-)
-
-// Responde Pergunta Geral do Usuario
-avbot.add('else', async message => {
-  await message.quote({ text: avbot.chat.askPython.asking, log: 'asking_py' })
-  lam.postData({ question: message.clean() })
-    .catch(async error => {
-      await avbot.bot.log(`Error(admin::exec) Throw(${error})`)
-      await message.send({ text: avbot.bot.chat.error.network, log: 'error_in_request' })
-    })
-    .then(async answer => {
-      if (!avbot.misc.guards.is.string(answer)) {
-        await avbot.bot.log('Error(admin::exec) Throw(bad response)')
-        await message.send({ text: avbot.bot.chat.error.network, log: 'error_in_request' })
-        return
-      }
-      await message.quote({ text: avbot.chat.askPython.finally, log: 'got_py_response' })
-      await message.send({ text: answer, log: 'py_response' })
-    })
-})
+// Add Bot Actions
+actions.add({ bot: avbot, lam: lam })
 
 // Cron Scheduled Messages
 cron.schedule('7 */1 * * *', async () => {

@@ -1,7 +1,3 @@
 
-# Dependencies
-node_modules
-yarn.lock
-
-# Build
-dist
+# build
+build
