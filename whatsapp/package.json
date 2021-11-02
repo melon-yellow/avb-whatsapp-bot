@@ -6,7 +6,7 @@
   "main": "build/index.js",
   "scripts": {
     "transpile": "tsc -p tsconfig.json",
-    "beautify": "js-beautify -r --editorconfig ./dist/**/*.{js,ts,tsx}",
+    "beautify": "js-beautify -r --editorconfig ./build/**/*.{js,ts,tsx}",
     "build": "rm -rf \"./build\" && yarn transpile && yarn beautify",
     "start": "node ./build/index.js",
     "load": "yarn build && yarn start",
