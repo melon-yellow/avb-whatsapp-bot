@@ -64,12 +64,12 @@ avbot.wapp.setContactsList(
 
 // Set API Listen Port and Authentication
 avbot.api.port(
-  Number(process.env.WHATSAPP_PORT ?? 3000)
+  Number(process.env.WHATSAPP_PORT)
 )
 
 // Set All Users
 Array(
-  Number(process.env.WHATSAPP_USERS ?? 0)
+  Number(process.env.WHATSAPP_USERS)
 ).forEach((_v, i) => {
   avbot.api.addUser({
     user: process.env[`WHATSAPP_USER_${i + 1}`],
