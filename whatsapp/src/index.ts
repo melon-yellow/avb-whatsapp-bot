@@ -75,15 +75,15 @@ Array(
   })
 })
 
-// Add Bot Actions
-actions.load({ bot: avbot, lam: lam })
-schedule.load({ bot: avbot, lam: lam })
-
 /*
 ##########################################################################################################################
 #                                                        START BOT                                                       #
 ##########################################################################################################################
 */
+
+// Load Bot Actions
+actions.load({ bot: avbot, lam: lam })
+schedule.load({ bot: avbot, lam: lam })
 
 // Create Instance of Venom
 await avbot.start()
