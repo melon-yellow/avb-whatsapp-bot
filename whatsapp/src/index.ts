@@ -45,17 +45,10 @@ const pyApi = new PyAPI(avbot)
 ##########################################################################################################################
 */
 
-// Set Venom Options
-avbot.wapp.interface.setOptions({
-  browserArgs: JSON.parse(
-    fs.readFileSync('./config/browser.args.json').toString()
-  ).args as string[]
-})
-
 // Set Bot Contacts File
 avbot.wapp.setContactsList(
   JSON.parse(
-    fs.readFileSync('./config/bot.contacts.json').toString()
+    fs.readFileSync('./private/bot.contacts.json').toString()
   ) as Record<string, string>
 )
 

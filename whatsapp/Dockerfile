@@ -1,2 +1,2 @@
-FROM node:16
+FROM buildkite/puppeteer
 WORKDIR /usr/app
