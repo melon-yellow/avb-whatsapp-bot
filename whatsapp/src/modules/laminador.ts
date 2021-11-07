@@ -28,12 +28,12 @@ export default class Laminador {
   ##########################################################################################################################
   */
 
-  async getProd() {
+  async relatorioProducaoLaminador() {
     try {
       // Resquest Data
       const responseList = await Promise.all([
-        axios.get('http://gusal2:3000/api/furnace'),
-        axios.get('http://gusal2:3000/api/mill')
+        axios.get(`${process.env.UAVBSRV_ADDRESS}/api/furnace`),
+        axios.get(`${process.env.UAVBSRV_ADDRESS}/api/mill`)
       ])
       const data = [responseList[0].data, responseList[1].data]
       // Parse Data
@@ -89,10 +89,12 @@ export default class Laminador {
   ##########################################################################################################################
   */
 
-  async getProdMes() {
+  async relatorioProducaoLaminadorMes() {
     try {
       // Request Data
-      const response = await axios.get('http://gusal2:3000/api/prod_lam_quente')
+      const response = await axios.get(
+        `${process.env.UAVBSRV_ADDRESS}/api/prod_lam_quente`
+      )
       const data = response.data
       // Parse Data
       const meses = [
@@ -141,10 +143,12 @@ export default class Laminador {
   ##########################################################################################################################
   */
 
-  async getTref() {
+  async relatorioProducaoTrefila() {
     try {
       // Request Data
-      const response = await axios.get('http://gusal2:3000/api/trf')
+      const response = await axios.get(
+        `${process.env.UAVBSRV_ADDRESS}/api/trf`
+      )
       const data = response.data
       // Parse Data
       const p02 = this.misc.numbers.round(!data.p02 ? 0 : (data.p02 / 1000), 1)
@@ -202,7 +206,7 @@ export default class Laminador {
       return message
     // If an Error Occurred
     } catch (error) {
-      console.log(`Throw(Laminador::getTref) Catch(${error})`)
+      console.log(`Throw(Laminador::relatorioTrefila) Catch(${error})`)
       return this.bot.chat.error.network
     }
   }

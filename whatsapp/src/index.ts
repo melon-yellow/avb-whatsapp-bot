@@ -21,11 +21,11 @@ import Bot from 'ts-wapp'
 import express from 'express'
 
 // Imports Utils
-import cron from 'node-cron'
 import fs from 'fs'
 
 // Modules
 import * as actions from './modules/actions.js'
+import * as schedule from './modules/schedule.js'
 import Laminador from './modules/laminador.js'
 
 /*
@@ -39,12 +39,6 @@ const avbot = new Bot('avbot')
 
 // Create Instance of Laminador
 const lam = new Laminador(avbot)
-
-/*
-##########################################################################################################################
-#                                                        SET OPTIONS                                                     #
-##########################################################################################################################
-*/
 
 // Set Bot Contacts File
 avbot.wapp.setContactsList(
@@ -81,22 +75,9 @@ Array(
   })
 })
 
-/*
-##########################################################################################################################
-#                                                        BOT METHODS                                                     #
-##########################################################################################################################
-*/
-
 // Add Bot Actions
-actions.add({ bot: avbot, lam: lam })
-
-// Cron Scheduled Messages
-cron.schedule('7 */1 * * *', async () => {
-  // Producao Trefila Grupo
-  await avbot.sends({ to: 'grupo_trefila', text: lam.getTref(), log: 'cron::prod_trf' })
-  // Producao Laminador Calegari
-  await avbot.sends({ to: 'calegari', text: lam.getProd(), log: 'cron::prod_lam_calegari' })
-})
+actions.load({ bot: avbot, lam: lam })
+schedule.load({ bot: avbot, lam: lam })
 
 /*
 ##########################################################################################################################
@@ -111,7 +92,11 @@ await avbot.start()
 app.listen(port)
 
 // Send Message to Admin
-await avbot.sends({ to: 'anthony', text: 'Node Avbot Started!', log: 'bot->start' })
+await avbot.sends({
+  to: 'anthony',
+  text: 'node bot started',
+  log: 'bot::start'
+})
 
 /*
 ##########################################################################################################################

@@ -16,65 +16,142 @@ import { is } from 'ts-misc/dist/utils/guards.js'
 */
 
 // Add Actions
-export function add(p: { bot: Bot, lam: Laminador }) {
+export function load(p: { bot: Bot, lam: Laminador }) {
   // Bot Actions
   const { bot, lam } = p
 
+  /*
+  ##########################################################################################################################
+  #                                                     CLASSE LAMINADOR                                                   #
+  ##########################################################################################################################
+  */
+
   // Responde Agradecimento
-  bot.add('coolFeedback',
-    message => message.clean().match(/^\s*(obrigado|valeu)\s*$/),
-    async message => {
-      await message.quote({ text: 'Estou as ordens! 😉🤝', log: 'cool_feedback' })
+  bot.add({
+    action: 'coolFeedback',
+    condition: message => message.clean().match(
+      /^\s*(obrigado|valeu)\s*$/
+    ),
+    do: async message => {
+      await message.quote({
+        text: 'Estou as ordens! 😉🤝',
+        log: 'bot::coolFeedback'
+      })
     }
-  )
+  })
+
+  /*
+  ##########################################################################################################################
+  #                                                     CLASSE LAMINADOR                                                   #
+  ##########################################################################################################################
+  */
 
   // Producao Trefila
-  bot.add('producaoTrefila',
-    message => message.clean().match(/^\s*(producao(\s+))?trefila\s*$/),
-    async message => {
-      await message.quote({ text: bot.chat.gotIt, log: 'got_it' })
-      await message.send({ text: lam.getTref(), log: 'bot::prod_trf' })
+  bot.add({
+    action: 'producaoTrefila',
+    condition: message => message.clean().match(
+      /^\s*(producao(\s+))?trefila\s*$/
+    ),
+    do: async message => {
+      await message.quote({
+        text: bot.chat.gotIt,
+        log: 'bot::gotIt'
+      })
+      await message.send({
+        text: lam.relatorioProducaoTrefila(),
+        log: 'bot::producaoTrefila'
+      })
     }
-  )
+  })
+
+  /*
+  ##########################################################################################################################
+  #                                                     CLASSE LAMINADOR                                                   #
+  ##########################################################################################################################
+  */
 
   // Producao Laminador
-  bot.add('producaoLaminador',
-    message => message.clean().match(/^\s*(producao(\s+))?laminador\s*$/),
-    async message => {
-      await message.quote({ text: bot.chat.gotIt, log: 'got_it' })
-      await message.send({ text: lam.getProd(), log: 'bot::prod_lam' })
+  bot.add({
+    action: 'producaoLaminador',
+    condition: message => message.clean().match(
+      /^\s*(producao(\s+))?laminador\s*$/
+    ),
+    do: async message => {
+      await message.quote({
+        text: bot.chat.gotIt,
+        log: 'bot::gotIt'
+      })
+      await message.send({
+        text: lam.relatorioProducaoLaminador(),
+        log: 'bot::producaoLaminador'
+      })
     }
-  )
+  })
+
+  /*
+  ##########################################################################################################################
+  #                                                     CLASSE LAMINADOR                                                   #
+  ##########################################################################################################################
+  */
 
   // Producao do Mes Laminador
-  bot.add('producaoLaminadorMes',
-    message => message.clean().match(/^\s*producao(\s+)(do(\s+))?mes((\s+)laminador)?\s*$/),
-    async message => {
-      await message.quote({ text: bot.chat.gotIt, log: 'got_it' })
-      await message.send({ text: lam.getProdMes(), log: 'bot::prod_mes_lam' })
+  bot.add({
+    action: 'producaoLaminadorMes',
+    condition: message => message.clean().match(
+      /^\s*producao(\s+)(do(\s+))?mes((\s+)laminador)?\s*$/
+    ),
+    do: async message => {
+      await message.quote({
+        text: bot.chat.gotIt,
+        log: 'bot::gotIt'
+      })
+      await message.send({
+        text: lam.relatorioProducaoLaminadorMes(),
+        log: 'bot::producaoLaminadorMes'
+      })
     }
-  )
+  })
+
+  /*
+  ##########################################################################################################################
+  #                                                     CLASSE LAMINADOR                                                   #
+  ##########################################################################################################################
+  */
 
   // Responde Pergunta Geral do Usuario
-  bot.add('else', async message => {
-    await message.quote({ text: bot.chat.askPython.asking, log: 'asking_py' })
-    axios.post(
-      `${process.env.UAVBSRV_ADDRESS}/questions`,
-      { question: message.clean() }
-    )
-      .catch(async error => {
-        await bot.log(`Error(admin::exec) Throw(${error})`)
-        await message.send({ text: bot.chat.error.network, log: 'error_in_request' })
+  bot.add({
+    action: 'else',
+    do: async message => {
+      // Send Asting Python
+      await message.quote({
+        text: bot.chat.askPython.asking,
+        log: 'bot::askingPython'
       })
-      .then(async answer => {
-        if (!is.string(answer)) {
-          await bot.log('Error(admin::exec) Throw(bad response)')
-          await message.send({ text: bot.chat.error.network, log: 'error_in_request' })
-          return
-        }
-        await message.quote({ text: bot.chat.askPython.finally, log: 'got_py_response' })
-        await message.send({ text: answer, log: 'py_response' })
-      })
+      // Request Python
+      axios.post(
+        `${process.env.UAVBSRV_ADDRESS}/questions`,
+        { question: message.clean() }
+      )
+        .catch(async error => {
+          await message.send({
+            text: bot.chat.error.network,
+            log: 'bot::gotError'
+          })
+          throw new Error(`${error}`)
+        })
+        .then(async answer => {
+          const msg = answer.data
+          if (!is.string(msg)) throw new Error('invalid response')
+          await message.quote({
+            text: bot.chat.askPython.finally,
+            log: 'bot::gotResponse'
+          })
+          await message.send({
+            text: msg,
+            log: 'bot::pythonResponse'
+          })
+        })
+    }
   })
 }
 
