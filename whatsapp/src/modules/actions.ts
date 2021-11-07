@@ -21,7 +21,7 @@ export function add(p: { bot: Bot, lam: Laminador }) {
   const { bot, lam } = p
 
   // Responde Agradecimento
-  bot.add('cool_feedback',
+  bot.add('coolFeedback',
     message => message.clean().match(/^\s*(obrigado|valeu)\s*$/),
     async message => {
       await message.quote({ text: 'Estou as ordens! 😉🤝', log: 'cool_feedback' })
@@ -29,7 +29,7 @@ export function add(p: { bot: Bot, lam: Laminador }) {
   )
 
   // Producao Trefila
-  bot.add('prod_trf',
+  bot.add('producaoTrefila',
     message => message.clean().match(/^\s*(producao(\s+))?trefila\s*$/),
     async message => {
       await message.quote({ text: bot.chat.gotIt, log: 'got_it' })
@@ -38,7 +38,7 @@ export function add(p: { bot: Bot, lam: Laminador }) {
   )
 
   // Producao Laminador
-  bot.add('prod_lam',
+  bot.add('producaoLaminador',
     message => message.clean().match(/^\s*(producao(\s+))?laminador\s*$/),
     async message => {
       await message.quote({ text: bot.chat.gotIt, log: 'got_it' })
@@ -47,7 +47,7 @@ export function add(p: { bot: Bot, lam: Laminador }) {
   )
 
   // Producao do Mes Laminador
-  bot.add('prod_mes_lam',
+  bot.add('producaoLaminadorMes',
     message => message.clean().match(/^\s*producao(\s+)(do(\s+))?mes((\s+)laminador)?\s*$/),
     async message => {
       await message.quote({ text: bot.chat.gotIt, log: 'got_it' })
@@ -59,7 +59,7 @@ export function add(p: { bot: Bot, lam: Laminador }) {
   bot.add('else', async message => {
     await message.quote({ text: bot.chat.askPython.asking, log: 'asking_py' })
     axios.post(
-      'http://gusal2:3000/questions',
+      `${process.env.UAVBSRV_ADDRESS}/questions`,
       { question: message.clean() }
     )
       .catch(async error => {
