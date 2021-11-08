@@ -26,6 +26,7 @@
     "puppeteer": "^10.4.0",
     "request-ip": "^2.1.3",
     "ts-misc": "anthony-freitas/ts-misc",
+    "ts-wapp": "anthony-freitas/ts-wapp",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.1.5"
   },
