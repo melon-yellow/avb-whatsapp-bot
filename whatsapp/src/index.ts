@@ -69,13 +69,11 @@ const port = Number(process.env.WHATSAPP_PORT)
 Array(
   Number(process.env.WHATSAPP_USERS)
 ).forEach((_v, i) => {
-  const user = {
-    [process.env[`WHATSAPP_USER_${i + 1}`]]: (
-      process.env[`WHATSAPP_PASSWORD_${i + 1}`]
-    )
-  }
   // Assign User
-  Object.assign(avbot.network.users, user)
+  Object.assign(avbot.network.users, {
+    [process.env[`WHATSAPP_USER_${i + 1}`]]:
+     process.env[`WHATSAPP_PASSWORD_${i + 1}`]
+  })
 })
 
 /*
