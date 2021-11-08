@@ -7,7 +7,7 @@
 #                                          Multi-language API for Whatsapp Bot                                           #
 #                                 ---------------- Python3 -- NodeJS ----------------                                    #
 #                                                * Under Development *                                                   #
-#                                     https://github.com/anthony-freitas/ts-avbot                                        #
+#                                 https://github.com/anthony-freitas/avb-whatsapp-bot                                    #
 #                                                                                                                        #
 ##########################################################################################################################
 #                                                        MAIN CODE                                                       #
