@@ -78,7 +78,7 @@ export default class Laminador {
       return message
     // If an Error Occurred
     } catch (error) {
-      console.log(`Throw(Laminador::getProd) Catch(${error})`)
+      console.log(`Throw(Laminador::relatorioProducaoLaminador) Catch(${error})`)
       return this.bot.chat.error.network
     }
   }
@@ -132,7 +132,7 @@ export default class Laminador {
       return message
     // If an Error Occurred
     } catch (error) {
-      console.log(`Throw(Laminador::getProdMes) Catch(${error})`)
+      console.log(`Throw(Laminador::relatorioProducaoLaminadorMes) Catch(${error})`)
       return this.bot.chat.error.network
     }
   }
@@ -206,7 +206,7 @@ export default class Laminador {
       return message
     // If an Error Occurred
     } catch (error) {
-      console.log(`Throw(Laminador::relatorioTrefila) Catch(${error})`)
+      console.log(`Throw(Laminador::relatorioProducaoTrefila) Catch(${error})`)
       return this.bot.chat.error.network
     }
   }
