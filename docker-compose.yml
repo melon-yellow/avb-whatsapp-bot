@@ -30,6 +30,7 @@ services:
     volumes:
       # Folders
       - ./whatsapp/src/:/usr/app/src/
+      - ./whatsapp/tokens/:/usr/app/tokens/
       - ./whatsapp/private/:/usr/app/private/
       - ./whatsapp/node_modules/:/usr/app/node_modules/
       # Files
