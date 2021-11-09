@@ -25,7 +25,7 @@ services:
     image: node:16
     container_name: whatsapp
     build: ./whatsapp
-    command: bash -c "yarn && yarn load"
+    command: bash -c "yarn && yarn build && yarn start"
     env_file: .env
     volumes:
       # Folders
