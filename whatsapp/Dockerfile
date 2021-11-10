@@ -4,7 +4,7 @@ FROM buildkite/puppeteer
 ##########################################################################################################################
 
 RUN apt-get update -y
-RUN apt-get upgrade -y
+# RUN apt-get upgrade -y
 RUN apt-get update -y
 
 ##########################################################################################################################
@@ -14,7 +14,7 @@ RUN apt-get update -y
 RUN apt-get install -y curl
 
 # Install LTS Node-16
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | -E bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 RUN apt-get update -y
 
