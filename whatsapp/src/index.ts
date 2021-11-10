@@ -18,7 +18,7 @@
 import Bot from 'ts-wapp'
 
 // Import Miscellaneous
-import { is } from 'ts-misc/dist/utils/guards'
+import { is } from 'ts-misc/dist/utils/guards.js'
 
 // Import Express
 import express from 'express'
