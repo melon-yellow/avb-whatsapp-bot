@@ -25,7 +25,12 @@ services:
     image: buildkite/puppeteer
     container_name: whatsapp
     build: ./whatsapp
-    command: bash -c "yarn && yarn build && yarn start"
+    command: '
+      bash -c "
+      yarn upgrade ts-misc &&
+      yarn upgrade ts-wapp &&
+      yarn && yarn build && yarn nonstop"
+    '
     env_file: .env
     volumes:
       # Folders
