@@ -25,12 +25,14 @@ export function load(p: { bot: Bot, lam: Laminador }) {
 
   // Cron Scheduled Messages
   cron.schedule('7 */1 * * *', async () => {
+    /*
     // Producao Trefila Grupo
     await bot.sends({
       to: 'grupo_trefila',
       text: lam.relatorioProducaoTrefila(),
       log: 'cron::producaoTrefila'
     })
+    */
     // Producao Laminador Calegari
     await bot.sends({
       to: 'calegari',
