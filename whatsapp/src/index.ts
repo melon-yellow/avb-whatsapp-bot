@@ -106,8 +106,6 @@ await avbot.start()
 // Listen on Port Especified
 app.listen(port)
 
-console.log(avbot.wapp.client.execute.actions)
-
 // Send Message to Admin
 await avbot.sends({
   to: 'anthony',
