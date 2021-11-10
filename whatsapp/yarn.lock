@@ -3745,8 +3745,8 @@ ts-misc@anthony-freitas/ts-misc:
     typescript "^4.1.5"
 
 ts-wapp@anthony-freitas/ts-wapp:
-  version "2.2.9"
-  resolved "https://codeload.github.com/anthony-freitas/ts-wapp/tar.gz/569c1c4bc8ed14882e2bf0662e14af0c3ab252b3"
+  version "2.2.10"
+  resolved "https://codeload.github.com/anthony-freitas/ts-wapp/tar.gz/55741bbb2e90bd73815706bbf4132773e5158d89"
   dependencies:
     axios "^0.21.1"
     body-parser "^1.19.0"
