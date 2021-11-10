@@ -41,7 +41,7 @@ export function load(p: { bot: Bot, lam: Laminador }) {
     do: async message => {
       await message.quote({
         text: 'Estou as ordens! 😉🤝',
-        log: 'bot::coolFeedback'
+        log: 'avbot::coolFeedback'
       })
     }
   })
@@ -65,7 +65,7 @@ export function load(p: { bot: Bot, lam: Laminador }) {
       })
       await message.send({
         text: lam.relatorioProducaoTrefila(),
-        log: 'bot::producaoTrefila'
+        log: 'Laminador::relatorioProducaoTrefila'
       })
     }
   })
@@ -89,7 +89,7 @@ export function load(p: { bot: Bot, lam: Laminador }) {
       })
       await message.send({
         text: lam.relatorioProducaoLaminador(),
-        log: 'bot::producaoLaminador'
+        log: 'Laminador::relatorioProducaoLaminador'
       })
     }
   })
@@ -113,7 +113,7 @@ export function load(p: { bot: Bot, lam: Laminador }) {
       })
       await message.send({
         text: lam.relatorioProducaoLaminadorMes(),
-        log: 'bot::producaoLaminadorMes'
+        log: 'Laminador::relatorioProducaoLaminadorMes'
       })
     }
   })
@@ -143,19 +143,24 @@ export function load(p: { bot: Bot, lam: Laminador }) {
             text: bot.chat.error.network,
             log: 'bot::gotError'
           })
-          throw new Error(`${error}`)
+          await bot.log(`Throw(bot::actions[else]::askPython) Catch(${error})`)
         })
         .then(async answer => {
-          const msg = answer.data
-          if (!is.string(msg)) throw new Error('invalid response')
-          await message.quote({
-            text: bot.chat.askPython.finally,
-            log: 'bot::gotResponse'
-          })
-          await message.send({
-            text: msg,
-            log: 'bot::pythonResponse'
-          })
+          try {
+            if (!answer) throw new Error('invalid response')
+            const msg = answer.data
+            if (!is.string(msg)) throw new Error('invalid response')
+            await message.quote({
+              text: bot.chat.askPython.finally,
+              log: 'bot::gotResponse'
+            })
+            await message.send({
+              text: msg,
+              log: 'bot::pythonResponse'
+            })
+          } catch (error) {
+            await bot.log(`Throw(bot::actions[else]::pythonResponse) Catch(${error})`)
+          }
         })
     }
   })
