@@ -17,16 +17,19 @@
 // Imports
 import Bot from 'ts-wapp'
 
+// Import Miscellaneous
+import { is } from 'ts-misc/dist/utils/guards'
+
 // Import Express
 import express from 'express'
 
-// Imports Utils
+// Imports FileSystem
 import fs from 'fs'
 
 // Modules
+import Laminador from './modules/laminador.js'
 import * as actions from './modules/actions.js'
 import * as schedule from './modules/schedule.js'
-import Laminador from './modules/laminador.js'
 
 /*
 ##########################################################################################################################
@@ -39,13 +42,6 @@ const avbot = new Bot('avbot')
 
 // Create Instance of Laminador
 const lam = new Laminador(avbot)
-
-// Set Bot Contacts File
-avbot.wapp.setContactsList(
-  JSON.parse(
-    fs.readFileSync('./private/bot.contacts.json').toString()
-  ) as Record<string, string>
-)
 
 /*
 ##########################################################################################################################
@@ -82,9 +78,27 @@ Array(
 ##########################################################################################################################
 */
 
+// Get Contacts Function
+const getContacts = (path: string) => {
+  const obj = JSON.parse(fs.readFileSync(path).toString())
+  const cond = is.object(obj) && is.every(obj, 'string')
+  return (cond ? obj : {}) as Record<string, string>
+}
+
+// Set Bot Contacts File
+Object.assign(avbot.wapp.contacts,
+  getContacts('./private/bot.contacts.json')
+)
+
 // Load Bot Actions
 actions.load({ bot: avbot, lam: lam })
 schedule.load({ bot: avbot, lam: lam })
+
+/*
+##########################################################################################################################
+#                                                        START BOT                                                       #
+##########################################################################################################################
+*/
 
 // Create Instance of Venom
 await avbot.start()
