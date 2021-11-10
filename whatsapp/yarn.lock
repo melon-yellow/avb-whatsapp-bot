@@ -3746,7 +3746,7 @@ ts-misc@anthony-freitas/ts-misc:
 
 ts-wapp@anthony-freitas/ts-wapp:
   version "2.2.7"
-  resolved "https://codeload.github.com/anthony-freitas/ts-wapp/tar.gz/b111e9ec902a72de0327198dd9cd8983235dcaf9"
+  resolved "https://codeload.github.com/anthony-freitas/ts-wapp/tar.gz/03b14063d74e88e203b6fa64c91ca9a8f5a3c721"
   dependencies:
     axios "^0.21.1"
     body-parser "^1.19.0"
