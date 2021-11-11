@@ -1,19 +1,20 @@
 
-# dist
-/whatsapp/dist/
+# env
+**/.env
 
 # dependencies
 /whatsapp/node_modules/
+/nlp/src/
 
-# db
-/db/data/
-
-# env
-**/.env
+# build
+/whatsapp/build/
 
 # private
 /whatsapp/private/
 /whatsapp/tokens/
 
-# python cache
+# db
+/db/data/
+
+# cache
 /nlp/**/__pycache__/
