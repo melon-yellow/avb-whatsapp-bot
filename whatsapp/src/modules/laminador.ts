@@ -38,8 +38,8 @@ export default class Laminador {
     try {
       // Resquest Data
       const responseList = await Promise.all([
-        axios.get(`${process.env.AVB_APP_ADDRESS}/api/furnace`),
-        axios.get(`${process.env.AVB_APP_ADDRESS}/api/mill`)
+        axios.get(`${process.env.AVB_APP_ADDRESS}/avb/laminador/forno`),
+        axios.get(`${process.env.AVB_APP_ADDRESS}/avb/laminador/blbp`)
       ])
       const data = [responseList[0].data, responseList[1].data]
       // Parse Data
@@ -99,7 +99,7 @@ export default class Laminador {
     try {
       // Request Data
       const response = await axios.get(
-        `${process.env.AVB_APP_ADDRESS}/api/prod_lam_quente`
+        `${process.env.AVB_APP_ADDRESS}/avb/laminador/producao`
       )
       const data = response.data
       // Parse Data
@@ -153,7 +153,7 @@ export default class Laminador {
     try {
       // Request Data
       const response = await axios.get(
-        `${process.env.AVB_APP_ADDRESS}/api/trf`
+        `${process.env.AVB_APP_ADDRESS}/avb/trefila/produtividade`
       )
       const data = response.data
       // Parse Data
