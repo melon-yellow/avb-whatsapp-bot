@@ -108,7 +108,7 @@ app.listen(port)
 
 // Send Message to Admin
 await avbot.sends({
-  to: 'anthony',
+  to: 'avb.automacao.anthony',
   text: 'node bot started',
   log: 'bot::start'
 })
