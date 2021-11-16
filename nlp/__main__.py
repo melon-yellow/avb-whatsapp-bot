@@ -21,8 +21,8 @@ def __load__(app: py_misc.Express):
 
     #################################################################################################################################################
 
-    @app.route('/questions/', methods=['POST'])
-    def questions(req: Request, res: Response):
+    @app.route('/nlp/questions/', methods=['POST'])
+    def nlpQuestions(req: Request, res: Response):
         data = nlp.read.message(req.json.get('question'))
         return res(
             json.dumps(data),

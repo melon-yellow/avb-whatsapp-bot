@@ -53,12 +53,30 @@ def SaveExample(example):
 #Massa de dados para exemplo
 def Examples():
     training_data = []
-    training_data.append({"class":"ntm", "sentence":"bloco acabador ntm gaiola interstand discos guia roletada agua breakout box"})
-    training_data.append({"class":"coilplate", "sentence":"coilplate braÇo foguete"})
-    training_data.append({"class":"stelmor", "sentence":"stelmor mesa primeira cabeca ventiladores ultima"})
-    training_data.append({"class":"produção", "sentence":"enviar qual produção mandar dizer falar quanto"})
-    training_data.append({"class":"hoje", "sentence":"agora nesse momento instante da hora hoje hoje"})
-    training_data.append({"class":"ontem", "sentence":"dia de ontem ontem"})
+    training_data.append({
+        "class": "ntm",
+        "sentence": "bloco acabador ntm gaiola interstand discos guia roletada agua breakout box"
+    })
+    training_data.append({
+        "class":"coilplate",
+        "sentence":"coilplate braÇo foguete"
+    })
+    training_data.append({
+        "class":"stelmor",
+        "sentence":"stelmor mesa primeira cabeca ventiladores ultima"
+    })
+    training_data.append({
+        "class":"produção",
+        "sentence":"enviar qual produção mandar dizer falar quanto"
+    })
+    training_data.append({
+        "class":"hoje",
+        "sentence":"agora nesse momento instante da hora hoje hoje"
+    })
+    training_data.append({
+        "class":"ontem",
+        "sentence":"dia de ontem ontem"
+    })
 
     Learning(training_data)
 
