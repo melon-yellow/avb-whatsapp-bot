@@ -135,7 +135,7 @@ export function load(p: { bot: Bot, lam: Laminador }) {
       })
       // Request Python
       axios.post(
-        `${process.env.UAVBSRV_ADDRESS}/questions`,
+        process.env.NLP_QUESTIONS,
         { question: message.clean() }
       )
         .catch(async error => {

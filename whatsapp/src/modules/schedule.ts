@@ -28,14 +28,14 @@ export function load(p: { bot: Bot, lam: Laminador }) {
     /*
     // Producao Trefila Grupo
     await bot.sends({
-      to: 'grupo_trefila',
+      to: 'avb.trefila.g',
       text: lam.relatorioProducaoTrefila(),
       log: 'cron::producaoTrefila'
     })
     */
     // Producao Laminador Calegari
     await bot.sends({
-      to: 'calegari',
+      to: 'avb.laminacao.calegari',
       text: lam.relatorioProducaoLaminador(),
       log: 'cron::producaoLaminador'
     })
