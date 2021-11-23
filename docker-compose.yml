@@ -28,15 +28,8 @@ services:
     command: bash -c "yarn && yarn build && yarn nonstop"
     env_file: .env
     volumes:
-      # Folders
-      - ./whatsapp/src/:/usr/app/src/
-      - ./whatsapp/tokens/:/usr/app/tokens/
-      - ./whatsapp/private/:/usr/app/private/
-      - ./whatsapp/node_modules/:/usr/app/node_modules/
-      # Files
-      - ./whatsapp/yarn.lock:/usr/app/yarn.lock
-      - ./whatsapp/package.json:/usr/app/package.json
-      - ./whatsapp/tsconfig.json:/usr/app/tsconfig.json
+      - ./whatsapp/:/usr/app/
+      - /usr/app/build/
     ports:
       - "${WHATSAPP_PORT}:${WHATSAPP_PORT}"
     depends_on:
