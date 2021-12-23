@@ -22,7 +22,7 @@ services:
 ##########################################################################################################################
 
   whatsapp:
-    image: buildkite/puppeteer
+    image: node:17
     container_name: whatsapp
     build: ./whatsapp
     command: bash -c "yarn && yarn build && yarn nonstop"
