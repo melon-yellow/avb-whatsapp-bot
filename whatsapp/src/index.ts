@@ -7,7 +7,7 @@
 #                                          Multi-language API for Whatsapp Bot                                           #
 #                                 ---------------- Python3 -- NodeJS ----------------                                    #
 #                                                * Under Development *                                                   #
-#                                 https://github.com/anthony-freitas/avb-whatsapp-bot                                    #
+#                                   https://github.com/melon-yellow/avb-whatsapp-bot                                     #
 #                                                                                                                        #
 ##########################################################################################################################
 #                                                        MAIN CODE                                                       #
@@ -81,7 +81,7 @@ Array.from(Array(
 // Get Contacts Function
 const getContacts = (path: string) => {
   const obj = JSON.parse(fs.readFileSync(path).toString())
-  const cond = is.object(obj) && is.every(obj, 'string')
+  const cond = is.object(obj) && is.object.of.string<typeof obj>(obj)
   return (cond ? obj : {}) as Record<string, string>
 }
 
