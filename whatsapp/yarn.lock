@@ -4210,8 +4210,8 @@ truncate-utf8-bytes@^1.0.0:
     utf8-byte-length "^1.0.1"
 
 ts-misc@melon-yellow/ts-misc:
-  version "1.7.3"
-  resolved "https://codeload.github.com/melon-yellow/ts-misc/tar.gz/9d0753a80de07d72acccf7ab438c379e87692946"
+  version "1.7.4"
+  resolved "https://codeload.github.com/melon-yellow/ts-misc/tar.gz/e7599f6eed7710afa19f88c86d6fd1048763839b"
   dependencies:
     js-beautify "^1.13.5"
     tsconfig-paths "^3.9.0"
@@ -4231,7 +4231,7 @@ ts-node@^9:
 
 ts-wapp@melon-yellow/ts-wapp:
   version "2.3.8"
-  resolved "https://codeload.github.com/melon-yellow/ts-wapp/tar.gz/4c531b1f29fd5bd4184df733673cef963eb58bfc"
+  resolved "https://codeload.github.com/melon-yellow/ts-wapp/tar.gz/57e3efc4ee55ccdf1bcb87647bfabd6ff2a3163e"
   dependencies:
     axios "^0.21.1"
     body-parser "^1.19.0"
