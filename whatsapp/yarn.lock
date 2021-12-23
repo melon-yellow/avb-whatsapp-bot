@@ -4230,8 +4230,8 @@ ts-node@^9:
     yn "3.1.1"
 
 ts-wapp@melon-yellow/ts-wapp:
-  version "2.3.7"
-  resolved "https://codeload.github.com/melon-yellow/ts-wapp/tar.gz/59548e62c6d6d95a8375679d240cbd4e2f8b15de"
+  version "2.3.8"
+  resolved "https://codeload.github.com/melon-yellow/ts-wapp/tar.gz/4c531b1f29fd5bd4184df733673cef963eb58bfc"
   dependencies:
     axios "^0.21.1"
     body-parser "^1.19.0"
