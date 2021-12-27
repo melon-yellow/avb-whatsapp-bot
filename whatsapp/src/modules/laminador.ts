@@ -41,7 +41,7 @@ export default class Laminador {
         axios.get(process.env.AVB_APP_LAMINADOR_FORNO),
         axios.get(process.env.AVB_APP_LAMINADOR_BLBP)
       ])
-      const data = [responseList[0].data, responseList[1].data]
+      const data = [responseList[0].data, responseList[1].data] as const
       // Parse Data
       let blbp = data[0].QTD_PECAS
       if (data[1].COBBLES > 0) blbp = this.misc.numbers.round(blbp / data[1].COBBLES)
