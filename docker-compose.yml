@@ -9,7 +9,7 @@ services:
 
   db:
     image: mysql:8
-    container_name: db-w
+    container_name: avb-whatsapp-db
     build: ./db
     command: --default-authentication-plugin=mysql_native_password
     env_file: .env
@@ -23,7 +23,7 @@ services:
 
   whatsapp:
     image: node:17
-    container_name: whatsapp
+    container_name: avb-whatsapp
     build: ./whatsapp
     command: bash -c "yarn && yarn build && yarn nonstop"
     env_file: .env
