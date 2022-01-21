@@ -18,8 +18,6 @@ services:
       - /usr/app/build/
     ports:
       - "${WHATSAPP_PORT}:${WHATSAPP_PORT}"
-    depends_on:
-      - db
     restart: always
 
 ##########################################################################################################################
