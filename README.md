@@ -1,7 +1,5 @@
-﻿
-# avb-whatsapp-bot
-
+﻿# avb-whatsapp-bot
 HTTP Rest API for Whatsapp Bot
 
-# run with docker compose:
-# $ docker-compose up
+# run:
+sudo docker-compose up -d
