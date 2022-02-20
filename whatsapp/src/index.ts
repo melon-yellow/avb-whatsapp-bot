@@ -103,7 +103,7 @@ schedule.load({ bot: avbot, lam: lam })
 // Create Instance of Venom
 await avbot.start()
 
-// Listen on Port Especified
+// Listen on Specified Port
 app.listen(port)
 
 // Send Message to Admin
